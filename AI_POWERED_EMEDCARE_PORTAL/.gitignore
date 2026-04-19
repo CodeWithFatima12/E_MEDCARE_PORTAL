@@ -1,0 +1,50 @@
+# # Python
+# __pycache__/
+# *.pyc
+
+# # Virtual env
+# venv/
+
+# # Environment variables
+# .env
+
+# # Database
+# db.sqlite3
+
+# # Media files
+# media/
+
+# # OS files
+# .DS_Store
+# Thumbs.db
+
+
+# Python stuff
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Databases
+db.sqlite3
+*.db
+
+# Sensitive files
+.env
+
+# Media & Static
+/media/
+/static_root/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
