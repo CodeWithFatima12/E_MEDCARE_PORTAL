@@ -44,6 +44,11 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'frontend',
+    'ai_module',
+    'appointment',
+    'pharmacy',
+    'accounts',
+    'lab',
 ]
 
 MIDDLEWARE = [
