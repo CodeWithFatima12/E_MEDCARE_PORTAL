@@ -1,0 +1,83 @@
+body {
+    margin: 0; padding: 20px 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #f0f4ff;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(20, 20, 196, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(0, 210, 255, 0.1) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(20, 20, 196, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(0, 210, 255, 0.15) 0px, transparent 50%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    overflow-x: hidden; overflow-y: auto !important;
+}
+
+/* --- PRELOADER / SPLASH SCREEN --- */
+#preloader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+    background: radial-gradient(circle at center, #1a1a4e 0%, #05051a 100%);
+    display: flex; justify-content: center; align-items: center; z-index: 9999;
+    transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.5s;
+}
+.logo-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto 40px; }
+.main-logo {
+    background: rgb(33, 32, 95); width: 100%; height: 100%; border-radius: 30px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 30px rgba(20, 20, 196, 0.5); position: relative; overflow: hidden;
+}
+.main-logo i { color: white; font-size: 50px; }
+.main-logo::after {
+    content: ''; position: absolute; top: -100%; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+    animation: scan 2s infinite;
+}
+.orbit {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 160px; height: 160px; border: 2px solid rgba(20, 20, 196, 0.3);
+    border-radius: 50%; border-top-color: white; animation: spin 3s linear infinite;
+}
+@keyframes scan { 0% { top: -100%; } 100% { top: 100%; } }
+@keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+.splash-text { color: white; font-size: 40px; font-weight: 500; letter-spacing: 8px; text-transform: uppercase; opacity: 0; animation: fadeInLetter 2s forwards 0.5s; }
+.splash-subtext { color: rgb(143, 143, 251); letter-spacing: 3px; font-size: 16px; text-transform: uppercase; opacity: 0; animation: fadeInLetter 2s forwards 1s; text-align: center; }
+@keyframes fadeInLetter { to { opacity: 1; letter-spacing: 4px; } }
+.loader-hidden { opacity: 0 !important; visibility: hidden !important; }
+
+/* --- CARD & FORMS --- */
+.login-card {
+    background: linear-gradient(0deg, rgb(215, 243, 250) 0%, rgb(183, 213, 252) 100%);
+    padding: 40px; border-radius: 17px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 90%; max-width: 380px; text-align: center; box-sizing: border-box;
+    opacity: 0; transform: scale(0.9) translateY(30px);
+    transition: all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.card-reveal { opacity: 1; transform: scale(1) translateY(0); }
+.icon-box { background-color: rgb(33, 32, 95); width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+.icon-box i { color: white; font-size: 30px; }
+.form-group { text-align: left; margin-bottom: 15px; }
+label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; margin-left: 3%; color: #333; }
+input { box-shadow: #cff0ff 0px 10px 10px -5px; width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 15px; box-sizing: border-box; outline: none; background: white; }
+.btn-signin { background-color: rgb(33, 32, 95); color: white; border: none; width: 100%; padding: 14px; border-radius: 20px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; box-shadow: rgba(133, 189, 215, 0.88) 0px 20px 10px -15px; }
+.btn-signin:hover { transform: translateY(-2px); opacity: 0.9; }
+.footer-text { margin-top: 20px; font-size: 13px; color: #666; }
+.footer-text a { color: rgb(33, 32, 95); text-decoration: none; font-weight: bold; }
+
+
+
+@media (max-width: 576px) {
+           .splash-text {
+               font-size: 20px !important;
+               
+               letter-spacing: 3px !important;
+               
+               font-weight: 700;
+              
+               padding: 0 15px;
+           }
+
+           .splash-subtext {
+               font-size: 10px !important;
+               letter-spacing: 1px !important;
+           }
+       }

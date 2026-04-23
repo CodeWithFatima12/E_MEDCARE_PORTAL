@@ -1,0 +1,93 @@
+/* Color Palette */
+:root {
+    --portal-blue: rgb(33, 32, 95);
+}
+
+/* Navbar Specific Styling */
+.custom-navbar {
+    padding: 10px 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(183, 213, 252) 100%);
+}
+
+.nav-icon-box {
+    width: 45px;
+    background-color: var(--portal-blue);
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-icon-box i {
+    color: white;
+    font-size: 24px;
+}
+
+.nav-link {
+    color: var(--portal-blue) !important;
+    font-weight: 500;
+    margin: 0 5px;
+    transition: all 0.4s ease-in-out;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px !important;
+    font-size: 15px;
+    
+}
+
+.nav-link i {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+.nav-link:hover, .nav-link.active {
+    background-color: var(--portal-blue);
+    color: white !important;
+    border-radius: 8px;
+    transform: scale(1.1);
+}
+
+/* Navbar Brand & Profile */
+.navbar-brand span {
+    color: var(--portal-blue);
+    font-weight: bold;
+}
+
+.Profile i {
+    color: var(--portal-blue);
+    transition: 0.3s ease;
+    margin-left: 15px;
+}
+
+.Profile:hover i {
+    transform: scale(1.2);
+}
+
+/* Target Nest Hub and similar small desktop/tablet screens */
+@media (min-width: 992px) and (max-width: 1200px) {
+    .nav-link {
+        font-size: 14px !important;
+        padding: 7px 8px !important; 
+        font-weight: 600!important; 
+    }
+    
+    .nav-link i {
+        font-size: 14px !important; 
+    }
+}
+/* Mobile Adjustments */
+@media (max-width: 991px) {
+    .nav-link {
+        margin: 10px 0;
+        justify-content: center;
+    }
+    .navbar-toggler {
+        background-color: var(--portal-blue);
+        border: none;
+    }
+}
+
+

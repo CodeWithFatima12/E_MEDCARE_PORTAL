@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top">
+    <div class="container d-flex justify-content-between align-items-center">
+        <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a class="navbar-brand d-none d-lg-flex align-items-center fw-bold" href="{% url 'homepage' %}">
+            <div class="nav-icon-box me-2"><i class="fas fa-heartbeat"></i></div>
+            <span class="brand-text">E-Medcare Portal</span>
+        </a>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" href="{% url 'about_us' %}"><i class="fas fa-hospital"></i> About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'appointment' %}"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li class="nav-item"><a class="nav-link active" href="{% url 'pharmacy' %}"><i class="fas fa-pills"></i> Pharmacy</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'ai_health_monitor' %}"><i class="fas fa-heartbeat"></i> Health Monitor</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'lab_reports' %}"><i class="fas fa-flask"></i> Lab Reports</a></li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <a href="{% url 'profile' %}" class="Profile-Icon d-none d-lg-block"><i class="fas fa-user-circle fa-2x"></i></a>
+            <div class="Cart-Trigger position-relative" style="cursor: pointer;" data-bs-toggle="offcanvas" data-bs-target="#cartSidebar">
+                <i class="fas fa-shopping-basket fa-2x"></i>
+                <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+    <div class="offcanvas-header border-bottom flex-column align-items-start">
+        <div class="d-flex justify-content-between w-100 align-items-center mb-3">
+            <h5 class="fw-bold mb-0 portal-blue">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="list-unstyled">
+             <li><a href="{% url 'homepage' %}" class="nav-link mobile-link"><i class="fas fa-heartbeat"></i> E-Medcare Portal</a></li>
+            <li><a href="{% url 'about_us' %}" class="nav-link mobile-link"><i class="fas fa-hospital me-2"></i> About Us</a></li>
+            <li><a href="{% url 'appointment' %}" class="nav-link mobile-link"><i class="fas fa-calendar-check me-2"></i> Appointments</a></li>
+            <li><a href="{% url 'pharmacy' %}" class="nav-link mobile-link active-mobile"><i class="fas fa-pills me-2"></i> Pharmacy</a></li>
+            <li><a href="{% url 'ai_health_monitor' %}" class="nav-link mobile-link"><i class="fas fa-heartbeat me-2"></i> Health Monitor</a></li>
+            <li><a href="{% url 'lab_reports' %}" class="nav-link mobile-link"><i class="fas fa-flask me-2"></i> Lab Reports</a></li>
+            <hr>
+            <li><a href="{% url 'profile' %}" class="nav-link mobile-link fw-bold" style="color: rgb(33, 32, 95) !important;"><i class="fas fa-user-circle me-2"></i> My Profile</a></li>
+        </ul>
+    </div>
+</div>

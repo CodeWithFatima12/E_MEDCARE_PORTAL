@@ -1,0 +1,24 @@
+
+/* Footer Styling (Common for both) */
+.main-footer {
+    background: linear-gradient(180deg, #05051a 0%, #1212db 150%);
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.footer-logo { color: white; font-weight: 700; }
+.footer-desc { font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); }
+.footer-heading { color: white; font-weight: 600; margin-bottom: 1.5rem; position: relative; padding-bottom: 10px; }
+.footer-heading::after { content: ''; position: absolute; left: 0; bottom: 0; width: 40px; height: 2px; background-color: white; }
+
+.footer-links a { color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: 0.3s; }
+.footer-links a:hover { color: white; padding-left: 5px; }
+
+.social-links a {
+    width: 35px; height: 35px; background: rgba(255, 255, 255, 0.1);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; color: white; text-decoration: none; transition: 0.4s;
+}
+
+.social-links a:hover { background: white; color: var(--portal-blue); transform: translateY(-5px); }
+.copyright-bar { background: rgba(0, 0, 0, 0.3); }

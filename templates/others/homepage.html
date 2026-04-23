@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}E-Medcare Portal - Home{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/others/home.css' %}">
+{% endblock %}
+{% block content %}
+
+ <div class="container-fluid p-0 vh-100 position-relative overflow-hidden">
+        <img src="{% static 'images/homepage/homepic.webp' %}" class="w-100 h-100 object-fit-cover" alt="Medical Portal">
+
+        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center homepic"
+            >
+
+            <div class="text-center px-4">
+                <h1 class="display-1 fw-black text-white mb-2" style="letter-spacing: -2px;">E-MEDCARE Portal</h1>
+                <div class="snappy-text-wrapper">
+                    <span id="snappy-typing" class="text-white fw-light display-6"></span>
+                    <span class="fast-cursor">|</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textTarget = document.getElementById("snappy-typing");
+        const phrases = ["Our Mission: You Stay Healthy.", "AI-Powered Medical Solutions.", "Healthcare at Your Fingertips."];
+        let pIdx = 0;
+        let cIdx = 0;
+
+        function snappyType() {
+            if (cIdx < phrases[pIdx].length) {
+                textTarget.textContent += phrases[pIdx].charAt(cIdx);
+                cIdx++;
+                setTimeout(snappyType, 40); // Super fast typing speed
+            } else {
+                // Wait 2 seconds then switch to next phrase instantly
+                setTimeout(() => {
+                    textTarget.style.opacity = "0";
+                    setTimeout(() => {
+                        textTarget.textContent = "";
+                        textTarget.style.opacity = "1";
+                        cIdx = 0;
+                        pIdx = (pIdx + 1) % phrases.length;
+                        snappyType();
+                    }, 300);
+                }, 2500);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", snappyType);
+    </script>
+{% endblock %}
