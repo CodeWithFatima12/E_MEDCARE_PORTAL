@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - E-Medcare{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/others/aboutus.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="ab-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 text-center text-lg-start">
+                <span class="badge rounded-pill ab-badge mb-3 px-3 py-2">SINCE 2026</span>
+                <h1 class="display-2 fw-bold mb-4 text-white">Your Health, <br><span class="ab-accent-text">Digitally Evolved.</span></h1>
+                <p class="lead opacity-75 mb-5 text-white">E-Medcare Portal merges artificial intelligence with human empathy
+                    to provide a healthcare experience that is instant, accurate, and accessible from anywhere.</p>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block text-center">
+                <i class="fas fa-hand-holding-medical ab-float-anim ab-hero-icon"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container ab-stats-container">
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+            <div class="ab-stat-card">
+                <div class="ab-icon-circle ab-bg-diag">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <h3 class="fw-bold">AI Diagnostics</h3>
+                <p class="text-muted small">Real-time health analysis powered by smart algorithms.</p>
+                <div class="progress ab-progress-height">
+                    <div class="progress-bar ab-w-95"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ab-stat-card">
+                <div class="ab-icon-circle ab-bg-docs">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h3 class="fw-bold">500+ Doctors</h3>
+                <p class="text-muted small">Connecting you to world-class specialists in seconds.</p>
+                <div class="progress ab-progress-height">
+                    <div class="progress-bar bg-info ab-w-85"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ab-stat-card">
+                <div class="ab-icon-circle ab-bg-delivery">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                <h3 class="fw-bold">Direct Delivery</h3>
+                <p class="text-muted small">Order medicines directly with door-step delivery.</p>
+                <div class="progress ab-progress-height">
+                    <div class="progress-bar bg-success ab-w-100"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="py-5 mt-5">
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="ab-mission-title mb-2">
+                Our <span class="ab-mission-highlight">Mission</span>
+            </h2>
+            <p class="lead text-muted">Redefining Healthcare through Innovation and Instant Accessibility.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="ab-mission-box">
+                    <span class="ab-mission-tag">Future Tech</span>
+                    <i class="fas fa-robot"></i>
+                    <h4 class="fw-bold">AI Health Prediction</h4>
+                    <p class="text-muted">Our AI module analyzes trends to predict future health risks, giving you a head start on wellness.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="ab-mission-box">
+                    <span class="ab-mission-tag">Exclusive Facility</span>
+                    <i class="fas fa-truck-medical"></i>
+                    <h4 class="fw-bold">Direct Medicine Delivery</h4>
+                    <p class="text-muted">Unlike other portals that only list medicines, we provide a full-service pharmacy where you can <strong>order directly</strong>.</p>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="ab-mission-box">
+                    <span class="ab-mission-tag">Virtual Care</span>
+                    <i class="fas fa-laptop-medical"></i>
+                    <h4 class="fw-bold">Online Meetings</h4>
+                    <p class="text-muted">Connect instantly with specialized doctors through secure video meetings. Quality consultation is now available.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-5 align-items-center">
+            <div class="col-lg-6">
+                <img src="{% static 'images/aboutus/ourmission.jpg' %}" alt="Our Mission" class="img-fluid ab-mission-img">
+            </div>
+            <div class="col-lg-6 ps-lg-5">
+                <h2 class="display-6 fw-bold mb-4">Bridging the gap between symptoms and solutions.</h2>
+                <p class="text-muted mb-4">In 2026, distance should not be a barrier to quality medical attention. E-Medcare provides a secure, encrypted platform.</p>
+                <div class="d-flex align-items-center mb-2"><i class="fas fa-check-circle text-primary me-2"></i><b>Real-time AI Health Alerts</b></div>
+                <div class="d-flex align-items-center mb-2"><i class="fas fa-check-circle text-primary me-2"></i><b>Secure Video Consultations</b></div>
+                <div class="d-flex align-items-center"><i class="fas fa-check-circle text-primary me-2"></i><b>Instant Order Processing</b></div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

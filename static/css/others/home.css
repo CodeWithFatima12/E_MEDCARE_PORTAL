@@ -1,0 +1,46 @@
+.object-fit-cover {
+      object-fit: cover !important;
+  }
+.homepic{
+    background: linear-gradient(to bottom, rgba(5, 5, 26, 0.7), rgba(18, 18, 219, 0.3));
+}
+  /* Faster Cursor */
+  .fast-cursor {
+      font-weight: 200;
+      color: white;
+      /* Bootstrap Info Color */
+      animation: fast-blink 0.2s step-end infinite;
+  }
+
+  @keyframes fast-blink {
+
+      from,
+      to {
+          opacity: 1;
+      }
+
+      50% {
+          opacity: 0;
+      }
+  }
+
+  #snappy-typing {
+      text-shadow: 0 0 15px #0b5ed7;
+      transition: all 0.1s ease;
+  }
+
+  /* Bold Typography */
+  .fw-black {
+      font-weight: 500 !important;
+  }
+
+  @media (max-width: 768px) {
+      .display-1 {
+          font-size: 3.5rem;
+      }
+
+      .display-6 {
+          font-size: 1.5rem !important;
+      }
+  }
+

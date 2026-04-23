@@ -1,0 +1,6 @@
+:root {
+    --primary-color: rgb(33, 32, 95);
+    --primary-hover: rgba(33, 32, 95, 0.9);
+    --bg-light: #f0f4ff;
+    --card-gradient: linear-gradient(0deg, rgb(215, 243, 250) 0%, rgb(183, 213, 252) 100%);
+}
