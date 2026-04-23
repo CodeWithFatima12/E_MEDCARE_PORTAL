@@ -13,7 +13,6 @@ db.sqlite3
 .env
 
 # Media (user uploads - ignore)
-media/
 
 # Static collected (production only)
 static_root/
