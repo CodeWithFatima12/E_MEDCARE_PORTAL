@@ -65,3 +65,50 @@
 }
 
 
+
+
+
+
+
+/* Pharmacy Dropdown Specific */
+.custom-dropdown {
+    border: 1px solid rgb(183, 210, 241);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 190px;
+    margin-top: 15px !important;
+    background: linear-gradient(0deg, rgb(240, 245, 255) 0%, rgb(255, 255, 255) 100%);
+}
+
+.custom-dropdown .dropdown-item {
+    color: var(--portal-blue);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.custom-dropdown .dropdown-item:hover {
+    background-color: var(--portal-blue);
+    color: white !important;
+}
+
+/* Hide Bootstrap arrow */
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+/* Accounts Styling for both views */
+#accounts {
+    color: var(--portal-blue);
+    margin-bottom: 10px;
+}
+
+/* Mobile Link Styling */
+.mobile-link {
+    display: flex;
+    align-items: center;
+    padding: 12px !important;
+}

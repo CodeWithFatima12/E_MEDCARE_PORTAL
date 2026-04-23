@@ -1,9 +1,9 @@
 /* Color Palette */
 :root {
-    --portal-blue: rgb(33, 32, 95);
+    --portal-blue:rgb(33, 32, 95);
 }
 
-/* Navbar Specific Styling */
+/* Navbar General Styling */
 .custom-navbar {
     padding: 10px 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -25,9 +25,10 @@
     font-size: 24px;
 }
 
+/* Nav Links */
 .nav-link {
     color: var(--portal-blue) !important;
-    font-weight: 500;
+    font-weight: 600;
     margin: 0 5px;
     transition: all 0.4s ease-in-out;
     display: flex;
@@ -47,47 +48,76 @@
     background-color: var(--portal-blue);
     color: white !important;
     border-radius: 8px;
-    transform: scale(1.1);
 }
 
-/* Navbar Brand & Profile */
-.navbar-brand span {
-    color: var(--portal-blue);
-    font-weight: bold;
-}
-
+/* Profile Dropdown */
 .Profile i {
     color: var(--portal-blue);
     transition: 0.3s ease;
-    margin-left: 15px;
 }
 
-.Profile:hover i {
-    transform: scale(1.2);
+.custom-dropdown {
+    border: 1px solid rgb(183, 210, 241);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 180px;
+    margin-top: 15px !important;
+    background: linear-gradient(0deg, rgb(212, 218, 225) 0%, rgb(255, 255, 255) 100%);
 }
 
-/* Target Nest Hub and similar small desktop/tablet screens */
+.custom-dropdown .dropdown-item {
+    color: var(--portal-blue);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.custom-dropdown .dropdown-item:hover {
+    background-color: var(--portal-blue);
+    color: white !important;
+}
+
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+/* Accounts Styling */
+#accounts {
+    color: var(--portal-blue);
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Mobile Offcanvas View (Pharmacy Style) */
+@media (max-width: 991px) {
+    .navbar-toggler {
+        background-color: var(--portal-blue);
+        border: none;
+        padding: 5px 8px;
+    }
+    
+    .mobile-link {
+        display: flex !important;
+        align-items: center;
+        padding: 12px !important;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        justify-content: flex-start !important; /* Center se huta kar left align */
+    }
+
+    .offcanvas-body .nav-link:hover {
+        background-color: var(--portal-blue);
+        color: white !important;
+    }
+}
+
+/* Nest Hub / Tablet Adjustments */
 @media (min-width: 992px) and (max-width: 1200px) {
     .nav-link {
         font-size: 14px !important;
         padding: 7px 8px !important; 
-        font-weight: 600!important; 
-    }
-    
-    .nav-link i {
-        font-size: 14px !important; 
+        font-weight: 600 !important; 
     }
 }
-/* Mobile Adjustments */
-@media (max-width: 991px) {
-    .nav-link {
-        margin: 10px 0;
-        justify-content: center;
-    }
-    .navbar-toggler {
-        background-color: var(--portal-blue);
-        border: none;
-    }
-}
-
-
