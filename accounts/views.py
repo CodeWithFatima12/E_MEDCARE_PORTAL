@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.contrib.auth.views import LoginView
+from django.contrib.auth import logout
 from .forms import SignupForm
 
 
@@ -45,3 +46,13 @@ def signup_view(request):
 def dashboard(request):
     return render(request, 'others/dashboard.html')
 
+
+# ==================logout===================
+
+def logout_view(request):
+    if request.method == "POST":
+        logout(request)
+        return render(request, 'accounts/logout.html')  # Ye aapka design wala page load karega
+    
+    # Agar koi direct URL browse kare to usay login par bhej dein
+    return redirect('signin')

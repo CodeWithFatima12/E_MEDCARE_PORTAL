@@ -1,11 +1,11 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Logout</title>
-<link rel="stylesheet" href="{% static 'css/accounts/logout.css' %}">    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout</title>
+    <link rel="stylesheet" href="{% static 'css/accounts/logout.css' %}">    
 </head>
 
 <body>
@@ -14,15 +14,14 @@
     <div class="icon">✓</div>
     <h2>You have logged out</h2>
     <p>You have been successfully signed out of your account.</p>
-    <!-- <a href="{% url 'login' %}">Login again</a> -->
+    <a href="{% url 'signin' %}">Login again</a> 
 </div>
 
-<!-- Auto redirect after 3 seconds -->
- {% comment %}<script>
-setTimeout(function(){
-    window.location.href = "{% url 'login' %}";
-}, 3000);
-</script> {% endcomment %}
+<script>
+    setTimeout(function(){
+        window.location.href = "{% url 'signin' %}";
+    }, 3000);
+</script>
 
 </body>
 </html>

@@ -1,64 +1,102 @@
 <nav class="navbar navbar-expand-lg navbar-dark custom-navbar sticky-top">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center fw-bold" href="{% url 'homepage' %}">
-      <div class="nav-icon-box me-2"><i class="fas fa-heartbeat"></i></div>
-      <span class="d-none d-sm-inline" style="color:rgb(33, 32, 95);">E-Medcare Portal</span>
-      <span class="d-inline d-sm-none" style="font-size: 1.2rem; color:rgb(33, 32, 95);">E-Medcare Portal</span>
-    </a>
-
-    <div class="d-flex align-items-center order-lg-last">
-      <div class="dropdown d-none d-lg-block">
-        <a href="#" class="Profile" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="fas fa-user-circle fa-2x text-blue"></i>
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center fw-bold" href="{% url 'homepage' %}">
+            <div class="nav-icon-box me-2"><i class="fas fa-heartbeat"></i></div>
+            <span class="d-none d-sm-inline" style="color:rgb(33, 32, 95);">E-Medcare Portal</span>
+            <span class="d-inline d-sm-none" style="font-size: 1.2rem; color:rgb(33, 32, 95);">E-Medcare Portal</span>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="userDropdown">
-          <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
-          <li><hr class="dropdown-divider" /></li>
-          <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
-        </ul>
-      </div>
 
-      <button class="navbar-toggler ms-2 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenuSimple">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    </div>
+        <div class="d-flex align-items-center order-lg-last">
+            <div class="dropdown d-none d-lg-block">
+                <a href="#" class="Profile" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle fa-2x text-blue"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end custom-dropdown" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fas fa-chart-line me-2"></i>
+                            Dashboard</a></li>
+                    <li>
+                        <hr class="dropdown-divider" />
+                    </li>
+                    <!-- <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li> -->
 
-    <div class="collapse navbar-collapse" id="navMenu">
-      <ul class="navbar-nav mx-auto mb-2 mb-lg-0 text-center">
-        <li class="nav-item"><a class="nav-link" href="{% url 'about_us' %}"><i class="fas fa-hospital"></i> About Us</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'appointment' %}"><i class="fas fa-calendar-check"></i> Appointments</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'pharmacy' %}"><i class="fas fa-pills"></i> Pharmacy</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'ai_health_monitor' %}"><i class="fas fa-heartbeat"></i> Health Monitor</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'lab_reports' %}"><i class="fas fa-flask"></i> Lab Reports</a></li>
-      </ul>
+                    <li>
+                        <form id="logout-form-dropdown" action="{% url 'logout' %}" method="POST"
+                            style="display: none;">
+                            {% csrf_token %}
+                        </form>
+
+                        <a class="dropdown-item text-danger" href="javascript:void(0)"
+                            onclick="document.getElementById('logout-form-dropdown').submit();">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <button class="navbar-toggler ms-2 d-lg-none" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#mobileMenuSimple">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 text-center">
+                <li class="nav-item"><a class="nav-link" href="{% url 'about_us' %}"><i class="fas fa-hospital"></i>
+                        About Us</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'appointment' %}"><i
+                            class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'pharmacy' %}"><i class="fas fa-pills"></i>
+                        Pharmacy</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'ai_health_monitor' %}"><i
+                            class="fas fa-heartbeat"></i> Health Monitor</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'lab_reports' %}"><i class="fas fa-flask"></i> Lab
+                        Reports</a></li>
+            </ul>
+        </div>
     </div>
-  </div>
 </nav>
 
 <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileMenuSimple">
-  <div class="offcanvas-header border-bottom flex-column align-items-start">
-    <div class="d-flex justify-content-between w-100 align-items-center mb-3">
-      <h5 class="fw-bold mb-0" style="color: var(--portal-blue);">Menu</h5>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-    </div>
-  </div>
-  <div class="offcanvas-body">
-    <ul class="list-unstyled">
-      <li><a href="{% url 'homepage' %}" class="nav-link mobile-link"><i class="fas fa-heartbeat me-2"></i> E-Medcare Portal</a></li>
-      <li><a href="{% url 'about_us' %}" class="nav-link mobile-link"><i class="fas fa-hospital me-2"></i> About Us</a></li>
-      <li><a href="{% url 'appointment' %}" class="nav-link mobile-link"><i class="fas fa-calendar-check me-2"></i> Appointments</a></li>
-      <li><a href="{% url 'pharmacy' %}" class="nav-link mobile-link"><i class="fas fa-pills me-2"></i> Pharmacy</a></li>
-      <li><a href="{% url 'ai_health_monitor' %}" class="nav-link mobile-link"><i class="fas fa-heartbeat me-2"></i> Health Monitor</a></li>
-      <li><a href="{% url 'lab_reports' %}" class="nav-link mobile-link"><i class="fas fa-flask me-2"></i> Lab Reports</a></li>
-      <hr>
-      <li>
-        <div id="accounts" class="fw-bold small d-flex align-items-center justify-content-center gap-2 w-100 py-2">
-          <i class="fas fa-user-circle fa-2x text-blue"></i>
-          <span>Accounts</span>
+    <div class="offcanvas-header border-bottom flex-column align-items-start">
+        <div class="d-flex justify-content-between w-100 align-items-center mb-3">
+            <h5 class="fw-bold mb-0" style="color: var(--portal-blue);">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
-      </li>
-      <li><a href="{% url 'profile' %}" class="nav-link mobile-link"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
-      <li><a href="#" class="nav-link mobile-link text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
-    </ul>
-  </div>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="list-unstyled">
+            <li><a href="{% url 'homepage' %}" class="nav-link mobile-link"><i class="fas fa-heartbeat me-2"></i>
+                    E-Medcare Portal</a></li>
+            <li><a href="{% url 'about_us' %}" class="nav-link mobile-link"><i class="fas fa-hospital me-2"></i> About
+                    Us</a></li>
+            <li><a href="{% url 'appointment' %}" class="nav-link mobile-link"><i
+                        class="fas fa-calendar-check me-2"></i> Appointments</a></li>
+            <li><a href="{% url 'pharmacy' %}" class="nav-link mobile-link"><i class="fas fa-pills me-2"></i>
+                    Pharmacy</a></li>
+            <li><a href="{% url 'ai_health_monitor' %}" class="nav-link mobile-link"><i
+                        class="fas fa-heartbeat me-2"></i> Health Monitor</a></li>
+            <li><a href="{% url 'lab_reports' %}" class="nav-link mobile-link"><i class="fas fa-flask me-2"></i> Lab
+                    Reports</a></li>
+            <hr>
+            <li>
+                <div id="accounts"
+                    class="fw-bold small d-flex align-items-center justify-content-center gap-2 w-100 py-2">
+                    <i class="fas fa-user-circle fa-2x text-blue"></i>
+                    <span>Accounts</span>
+                </div>
+            </li>
+            <li><a href="{% url 'profile' %}" class="nav-link mobile-link"><i class="fas fa-chart-line me-2"></i>
+                    Dashboard</a></li>
+            <!-- <li><a href="{% url 'logout' %}" class="nav-link mobile-link text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li> -->
+            <li>
+                <form action="{% url 'logout' %}" method="post" id="logout-form" style="display: none;">
+                    {% csrf_token %}
+                </form>
+                <a href="javascript:void(0)" onclick="document.getElementById('logout-form').submit();"
+                    class="nav-link mobile-link text-danger">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>
