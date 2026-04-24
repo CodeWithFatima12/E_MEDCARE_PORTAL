@@ -28,11 +28,11 @@
         <p class="subtitle">Welcome back! Please enter your details.</p>
         <form method="POST" action="{% url 'signin' %}">
             {% csrf_token %}
-            {% if form.errors %}
+            <!-- {% if form.errors %}
             <div class="alert alert-danger">
                 Invalid username or password.
             </div>
-            {% endif %}
+            {% endif %} -->
             <div class="form-group">
                 <label>Email Address</label>
                 <input type="email" name="username" placeholder="name@example.com" required>
