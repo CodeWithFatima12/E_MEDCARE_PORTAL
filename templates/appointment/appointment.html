@@ -1,17 +1,120 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Appointment - E-Medcare{% endblock %}
-
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/appointment/department.css' %}">
+<style>
+    /* Choti si extra styling Urdu text ke liye */
+    .description-text {
+        font-size: 0.75rem;
+        color: #6c757d;
+        direction: rtl; /* Urdu alignment ke liye */
+        margin-top: 5px;
+        line-height: 1.3;
+    }
+    .category-label {
+        margin-bottom: 2px;
+        font-weight: 700;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="text-center py-5">
-        <h1 class="fw-bold" style="color: rgb(33, 32, 95);">Make an Appointment</h1>
-        <p class="text-muted">Schedule your visit with our healthcare professionals.</p>
-        <h3 class="mt-4">Hello Appointment Page</h3>
+<div class="search-header-bg">
+    <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="deptSearch" class="search-input" placeholder="Search departments (e.g. Skin, Heart, Child)...">
     </div>
 </div>
+
+<main class="container my-4">
+    <section class="category-section mb-4">
+        <div class="category-card p-4 shadow-sm">
+            <h5 class="fw-bold mb-4">I am looking for</h5>
+            
+            <div id="dept-grid" class="row g-4 text-center">
+                <div class="col-12">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    
+    // Function to load and filter departments
+    function fetchDepartments(query = '') {
+        $.ajax({
+            url: "/api/appointment/departments/", 
+            method: "GET",
+            data: { 'search': query },
+            success: function(data) {
+                let html = '';
+                if(data.length > 0) {
+                    data.forEach(dept => {
+                        /* Image Naming Logic (Safe Method):
+                           1. Sab lowercase: "General Medicine" -> "general medicine"
+                           2. '&' khatam: "gynecology & obstetrics" -> "gynecology  obstetrics"
+                           3. Spaces ki jagah hyphen (-): "general medicine" -> "general-medicine"
+                           4. Multiple hyphens clean: "a--b" -> "a-b"
+                        */
+                        let imgName = dept.name.toLowerCase()
+                                          .replace(/&/g, '')        
+                                          .trim()                   
+                                          .replace(/\s+/g, '-')     
+                                          .replace(/-+/g, '-');     
+
+                        let imgSrc = `/static/images/appointment/${imgName}.png`; 
+
+                        html += `
+                        <div class="col-4 animate-item">
+                            <a href="/doctors/?dept_id=${dept.id}" class="category-item text-decoration-none d-block">
+                                <div class="category-icon-box skin-bg">
+                                    <img src="${imgSrc}" 
+                                         onerror="this.src='/static/images/appointment/default.png'" 
+                                         alt="${dept.name}">
+                                </div>
+                                <p class="category-label">${dept.name}</p>
+                                <p class="description-text">${dept.description}</p>
+                            </a>
+                        </div>`;
+                    });
+                } else {
+                    html = `
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-search mb-3 text-muted" style="font-size: 2rem;"></i>
+                        <p class="text-muted">No departments found matching "${query}"</p>
+                    </div>`;
+                }
+                $('#dept-grid').html(html);
+            },
+            error: function() {
+                $('#dept-grid').html('<p class="text-danger text-center">Server se data lane mein masla hua hai.</p>');
+            }
+        });
+    }
+
+    // 1. Page load hotay hi saari categories dikhayein
+    fetchDepartments();
+
+    // 2. Search typing par real-time filter
+    let timeout = null;
+    $('#deptSearch').on('keyup', function() {
+        let value = $(this).val();
+        
+        // Debouncing: thora wait karein taake har alphabet par request na jaye (Performance ke liye)
+        clearTimeout(timeout);
+        timeout = setTimeout(function () {
+            fetchDepartments(value);
+        }, 300); 
+    });
+});
+</script>
 {% endblock %}
