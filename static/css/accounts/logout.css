@@ -1,113 +1,130 @@
-body{
-    margin:0;
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family:Segoe UI, sans-serif;
-    background:#f0f4ff;
-    background-image:
+/* --- Desktop & Base Styles --- */
+body {
+    margin: 0;
+    min-height: 100vh; /* Centering ke liye safe approach */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f0f4ff;
+    background-image: 
         radial-gradient(at 0% 0%, rgba(20,20,196,0.12), transparent 50%),
         radial-gradient(at 100% 100%, rgba(0,210,255,0.12), transparent 50%);
-    padding: 15px;
+    padding: 20px; 
     box-sizing: border-box;
+    overflow-x: hidden; /* Mobile safe horizontal scroll */
 }
 
 /* Main Card */
-.card{
-    width:100%;
-    max-width:340px;
-    padding:30px;
-    background:linear-gradient(135deg,#d7f3fa,#b7d5fc);
-    border-radius:18px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.1);
-    text-align:center;
-    animation: fadeIn 0.4s ease;
+.card {
+    width: 100%;
+    max-width: 360px; 
+    padding: 40px 30px; 
+    background: linear-gradient(135deg, #d7f3fa, #b7d5fc);
+    border-radius: 24px; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
 }
 
 /* Icon Box */
-.icon{
-    width:60px;
-    height:60px;
-    margin:0 auto 15px;
-    background:#21205f;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:15px;
-    font-size:24px;
+.icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    background: #21205f;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    font-size: 28px;
+    box-shadow: 0 8px 15px rgba(33, 32, 95, 0.2);
 }
 
-/* Heading */
-h2{
-    margin:10px 0;
-    color:#222;
-    font-size:18px;
+h2 {
+    margin: 10px 0 5px 0; /* Bottom margin tight */
+    color: #21205f; 
+    font-size: 22px; 
+    font-weight: 700;
 }
 
-/* Paragraph */
-p{
-    color:#555;
-    font-size:13px;
-    margin: 0;
+p {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5; 
+    margin: 0 0 10px 0; /* Spacing controlled */
 }
 
-/* Login Link Button */
-a{
-    display:inline-block;
-    margin-top:15px;
-    padding:11px 18px;
-    background:#21205f;
-    color:white;
-    text-decoration:none;
-    border-radius:20px;
-    font-size:13px;
-    transition:0.3s;
+a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: #21205f;
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(33, 32, 95, 0.15);
 }
 
-a:hover{
-    transform:translateY(-2px);
-    opacity:0.9;
+a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(33, 32, 95, 0.25);
+    opacity: 0.95;
 }
 
 /* Animation */
-@keyframes fadeIn{
-    from{
-        opacity:0;
-        transform:scale(0.9);
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px); 
     }
-    to{
-        opacity:1;
-        transform:scale(1);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-/* 📱 Responsive Design */
-@media (max-width: 480px){
-
-    .card{
-        padding:22px;
-        border-radius:16px;
+/* --- 📱 Responsive Optimization for Small Mobile Screens --- */
+@media (max-width: 420px) { /* Width limit tightened */
+    body {
+        padding: 10px; /* Safe space for very narrow screens */
     }
 
-    h2{
-        font-size:16px;
+    .card {
+        padding: 25px 15px; /* Spacing mazeed compact kar di vertical safe-space ke liye */
+        max-width: calc(100% - 10px); /* Tightly fit width */
+        border-radius: 20px; /* Rounded corners thore safe mobile ke liye */
     }
 
-    p{
-        font-size:12px;
+    .icon {
+        width: 50px; /* Icon size optimized for small screens */
+        height: 50px;
+        font-size: 20px; /* FontSize optimized for icon */
+        margin: 0 auto 10px; /* Spacing tight */
+        border-radius: 15px;
     }
 
-    a{
-        width:100%;
-        padding:12px;
-        font-size:13px;
+    h2 {
+        font-size: 17px; /* Headings tighter */
+        margin: 5px 0; /* Vertical spacing very tight */
     }
 
-    .icon{
-        width:55px;
-        height:55px;
-        font-size:20px;
+    p {
+        font-size: 12px; /* Small text minimized */
+        line-height: 1.3; /* Compact lines */
+        padding: 0 5px; /* Side spacing */
+        margin: 0 0 5px 0; /* Tighter spacing */
+    }
+
+    a {
+        width: 100%; /* Mobile safe, easy-to-click button */
+        box-sizing: border-box;
+        padding: 10px; /* Tighter padding for safe height */
+        font-size: 12px; /* Small button text */
+        margin-top: 15px; /* Spacing minimized */
     }
 }
