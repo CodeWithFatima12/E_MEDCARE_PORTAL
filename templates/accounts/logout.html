@@ -1,0 +1,28 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Logout</title>
+<link rel="stylesheet" href="{% static 'css/accounts/logout.css' %}">    
+</head>
+
+<body>
+
+<div class="card">
+    <div class="icon">✓</div>
+    <h2>You have logged out</h2>
+    <p>You have been successfully signed out of your account.</p>
+    <!-- <a href="{% url 'login' %}">Login again</a> -->
+</div>
+
+<!-- Auto redirect after 3 seconds -->
+ {% comment %}<script>
+setTimeout(function(){
+    window.location.href = "{% url 'login' %}";
+}, 3000);
+</script> {% endcomment %}
+
+</body>
+</html>

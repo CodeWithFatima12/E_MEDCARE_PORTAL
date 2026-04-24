@@ -27,7 +27,7 @@ urlpatterns = [
     # path('ai/', include('ai_module.urls')),
     # path('appointment/', include('appointment.urls')),
     # path('pharmacy/', include('pharmacy.urls')),
-    # path('accounts/', include('accounts.urls')),
+    path('accounts/', include('accounts.urls')),
     # path('lab/', include('lab.urls')),
     
     
