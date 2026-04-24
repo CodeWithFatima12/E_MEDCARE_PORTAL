@@ -1,0 +1,113 @@
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Segoe UI, sans-serif;
+    background:#f0f4ff;
+    background-image:
+        radial-gradient(at 0% 0%, rgba(20,20,196,0.12), transparent 50%),
+        radial-gradient(at 100% 100%, rgba(0,210,255,0.12), transparent 50%);
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+/* Main Card */
+.card{
+    width:100%;
+    max-width:340px;
+    padding:30px;
+    background:linear-gradient(135deg,#d7f3fa,#b7d5fc);
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    text-align:center;
+    animation: fadeIn 0.4s ease;
+}
+
+/* Icon Box */
+.icon{
+    width:60px;
+    height:60px;
+    margin:0 auto 15px;
+    background:#21205f;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:15px;
+    font-size:24px;
+}
+
+/* Heading */
+h2{
+    margin:10px 0;
+    color:#222;
+    font-size:18px;
+}
+
+/* Paragraph */
+p{
+    color:#555;
+    font-size:13px;
+    margin: 0;
+}
+
+/* Login Link Button */
+a{
+    display:inline-block;
+    margin-top:15px;
+    padding:11px 18px;
+    background:#21205f;
+    color:white;
+    text-decoration:none;
+    border-radius:20px;
+    font-size:13px;
+    transition:0.3s;
+}
+
+a:hover{
+    transform:translateY(-2px);
+    opacity:0.9;
+}
+
+/* Animation */
+@keyframes fadeIn{
+    from{
+        opacity:0;
+        transform:scale(0.9);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 480px){
+
+    .card{
+        padding:22px;
+        border-radius:16px;
+    }
+
+    h2{
+        font-size:16px;
+    }
+
+    p{
+        font-size:12px;
+    }
+
+    a{
+        width:100%;
+        padding:12px;
+        font-size:13px;
+    }
+
+    .icon{
+        width:55px;
+        height:55px;
+        font-size:20px;
+    }
+}

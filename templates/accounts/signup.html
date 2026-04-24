@@ -1,32 +1,45 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - E-Medcare Portal</title>
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/accounts/accounts.css' %}">
 </head>
+
 <body>
-    <div class="login-card card-reveal" >
+    <div class="login-card card-reveal">
         <div class="icon-box"><i class="fas fa-heartbeat"></i></div>
         <h2>Create Account</h2>
-        <p class="footer-text" >Join the E-Medcare community</p>
+        <p class="footer-text">Join the E-Medcare community</p>
         <form method="POST">
             {% csrf_token %}
+            <!-- {% if form.errors %}
+            <div class="alert alert-danger">
+                {% for field in form %}
+                {% for error in field.errors %}
+                <p>{{ error }}</p>
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %} -->
+            
+
             <div class="form-group">
                 <label>First Name</label>
-                <input type="text" name="name" placeholder="Enter your full name" required>
+                <input type="text" name="first_name" placeholder="Enter your full name" required>
             </div>
             <div class="form-group">
                 <label>Last Name</label>
-                <input type="text" name="name" placeholder="Enter your full name" required>
+                <input type="text" name="last_name" placeholder="Enter your full name" required>
             </div>
             <div class="form-group">
                 <label>Email Address</label>
-                <input type="email" name="email" placeholder="name@example.com" required>
+                <input type="email" name="username" placeholder="name@example.com" required>
             </div>
             <div class="form-group">
                 <label>Password</label>
@@ -36,5 +49,20 @@
         </form>
         <p class="footer-text">Already have an account? <a href="{% url 'signin' %}">Sign In</a></p>
     </div>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if messages %}
+    {% for message in messages %}
+        <script>
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "{{ message|escapejs }}",
+                confirmButtonColor: "#d33"
+            });
+        </script>
+    {% endfor %}
+{% endif %}
 </body>
+
 </html>
