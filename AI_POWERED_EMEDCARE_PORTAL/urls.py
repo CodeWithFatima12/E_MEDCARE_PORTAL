@@ -25,8 +25,13 @@ urlpatterns = [
     path('', include('frontend.urls')),
     # OTHER MODULES
     # path('ai/', include('ai_module.urls')),
+<<<<<<< HEAD
     # path('appointment/', include('appointment.urls')),
     path('api_pharmacy/', include('pharmacy.urls')),
+=======
+    path('api/appointment/', include('appointment.urls')),
+    # path('pharmacy/', include('pharmacy.urls')),
+>>>>>>> cb361cf93d1dc93a2be3104467aebec1efe3981c
     path('accounts/', include('accounts.urls')),
     # path('lab/', include('lab.urls')),
     
