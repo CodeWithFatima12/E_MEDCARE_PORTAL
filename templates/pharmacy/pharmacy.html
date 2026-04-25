@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pharmacy/pharmacy.css' %}">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+{% endblock %}
 
-<script src="{% static 'js/cartcount.js' %}"></script>
+
 {% block content %}
 <div class="bg-white border-bottom shadow-sm py-4">
     <div class="container text-center">
@@ -26,6 +28,11 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static 'js/cartcount.js' %}"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 
@@ -70,11 +77,9 @@
     }
 
 
-    /**
-     * Main function to fetch medicines from the API
-     * @param {string} search - The search term from input
-     * @param {string} category - The category name from filter buttons
-     */
+
+    //   Main function to fetch medicines from the API
+
     function fetchMedicines(search = '', category = null) {
         let url = '/api_pharmacy/medicines/';
         let params = [];
@@ -137,9 +142,12 @@
                                 <p class="small text-muted mb-2">${product.category_name || ''}</p>
                                 <div class="h5 fw-bold mt-auto mb-3" style="color: #21205f;">Rs. ${parseFloat(product.price).toFixed(2)}</div>
                                 <button class="btn btn-outline-primary btn-sm rounded-pill w-100" 
-                                        onclick="addToCart(${product.id})">
-                                    <i class="fas fa-cart-plus me-1"></i> Add to Cart
-                                </button>
+                                 style="background-color:#21205f; color:white; border:none;"
+                                     onclick="addToCart(${product.id}, ${product.stock_quantity})"
+                                          ${product.stock_quantity === 0 ? 'disabled' : ''}>
+                                          <i class="fas fa-cart-plus me-1"></i> 
+                                         ${product.stock_quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+                                 </button>
                             </div>
                         </div>
                     </div>
@@ -152,77 +160,30 @@
     /**
      * Placeholder for Cart functionality
      */
-    // function addToCart(medicineId) {
-    //     console.log("Adding medicine ID to cart:", medicineId);
-    //     // Implement your cart POST request here
-    // }
-    function addToCart(medicineId) {
-    $.ajax({
-        url: "/api_pharmacy/cart/add/",
-        type: "POST",
-        contentType: "application/json",
-        headers: {
-            "X-CSRFToken": "{{ csrf_token }}"
-        },
-        data: JSON.stringify({
-            medicine_id: medicineId
-        }),
-        success: function (response) {
-            console.log(response.message);
-            updateCartCount();
-        }
-    });
-}
-    
+
+    function addToCart(medicineId,stock_quantity) {
+        if (stock_quantity === 0) {
+        alert("This medicine is out of stock");
+        return;
+    }
+
+        $.ajax({
+            url: "/api_pharmacy/cart/add/",
+            type: "POST",
+            contentType: "application/json",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}"
+            },
+            data: JSON.stringify({
+                medicine_id: medicineId
+            }),
+            success: function (response) {
+                console.log(response.message);
+                updateCartCount();
+            }
+        });
+    }
+
 </script>
 
-
-<style>
-    .category-pill {
-        white-space: nowrap;
-        padding: 8px 20px;
-        border-radius: 50px;
-        /* Professional blue border for inactive state */
-        border: 2px solid #21205f;
-        background: white;
-        color: #21205f;
-        transition: all 0.3s ease;
-        cursor: pointer;
-        font-weight: 500;
-        outline: none;
-    }
-
-    /* Active state (when clicked/selected) and Hover state */
-    .category-pill.active,
-    .category-pill:hover {
-        background-color: #21205f !important;
-        /* Full blue background */
-        color: white !important;
-        /* Pure white text */
-        border-color: #21205f;
-        /* Matching border */
-        box-shadow: 0 4px 10px rgba(33, 32, 95, 0.2);
-        /* Soft shadow for depth */
-    }
-
-    /* Hide scrollbar logic */
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
-
-    .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-    }
-
-    /* Product card animation */
-    .product-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .product-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
-    }
-</style>
 {% endblock %}

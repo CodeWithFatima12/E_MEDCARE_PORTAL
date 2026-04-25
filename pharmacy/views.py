@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Sum
 from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.cache import never_cache
+from django.contrib.auth.decorators import login_required
 import uuid
 
 
@@ -112,44 +113,48 @@ def cart_count(request):
 
     return Response({"count": total})
 
+
+@login_required  
 def checkout_view(request):
-    user = request.user # یہ لائن لاگ ان یوزر کا پورا ابجیکٹ لے آئے گی
-    cart = Cart.objects.get(user=user)
-    cart_items = CartItem.objects.filter(cart=cart)
+    user = request.user
+    try:
+    # Get cart 
+        cart = Cart.objects.get(user=user)
+        cart_items = CartItem.objects.filter(cart=cart)
+    except Cart.DoesNotExist:
+        cart_items = []
+
     total = sum(item.medicine.price * item.quantity for item in cart_items)
 
     context = {
-        'user': user,  # یوزر کا ڈیٹا یہاں سے جائے گا
+        'user': user, #get user objectے
         'cart_items': cart_items,
         'total': total
     }
     return render(request, 'pharmacy/checkout.html', context)
 
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def place_order(request):
     user = request.user
-    # ڈیٹا حاصل کرنا (request.POST یا request.data دونوں کے لیے محفوظ طریقہ)
     address = request.data.get('address') or request.POST.get('address')
     
     if not address:
-        return Response({"error": "براہ کرم ایڈریس درج کریں"}, status=400)
+        return Response({"error": "Please Enter Address"}, status=400)
 
     try:
         with transaction.atomic():
-            # 1. یوزر کا کارٹ حاصل کریں
+            # 1. fetch user cart
             cart = get_object_or_404(Cart, user=user)
             cart_items = CartItem.objects.filter(cart=cart)
 
             if not cart_items.exists():
-                return Response({"error": "کارٹ خالی ہے"}, status=400)
+                return Response({"error": "Cart is empty"}, status=400)
 
-            # ٹوٹل پرائس
+            # Total Price
             total_amount = sum(item.medicine.price * item.quantity for item in cart_items)
 
-            # 2. آرڈر بنائیں
+            # 2. order
             order = Order.objects.create(
                 user=user,
                 order_number=str(uuid.uuid4().hex[:10].upper()),
@@ -158,7 +163,7 @@ def place_order(request):
                 status='booked'
             )
 
-            # 3. آئٹمز ٹرانسفر کریں اور اسٹاک کم کریں
+            # 3. send item to orderitem table and decrease stock
             for item in cart_items:
                 OrderItem.objects.create(
                     order=order,
@@ -167,18 +172,18 @@ def place_order(request):
                     price=item.medicine.price
                 )
 
-                # اسٹاک اپ ڈیٹ
+                # update stock
                 med = item.medicine
                 if med.stock_quantity >= item.quantity:
                     med.stock_quantity -= item.quantity
                     med.save()
                 else:
-                    raise Exception(f"معذرت، {med.name} کا اسٹاک ختم ہو چکا ہے")
+                    raise Exception(f"OutOfStock {med.name}")
 
-            # 4. کارٹ صاف کریں
+            # 4. clean Cart
             cart_items.delete()
 
-            return Response({"success": "آرڈر مکمل ہو گیا!", "order_id": order.order_number}, status=201)
+            return Response({"success": "Order Completed!", "order_id": order.order_number}, status=201)
 
     except Exception as e:
         return Response({"error": str(e)}, status=400)

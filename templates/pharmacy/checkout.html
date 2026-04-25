@@ -1,117 +1,17 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pharmacy/checkout.css' %}">   
+{% endblock %}
 
 {% block content %}
-<style>
-    :root {
-        font-family: 'Times New Roman', Times, serif;
-
-    }
-
-    .checkout-wrapper {
-        display: flex;
-        gap: 30px;
-        margin-top: 30px;
-    }
-
-    .left-box,
-    .right-box {
-        padding: 25px;
-        background: #fff;
-        border-radius: 15px;
-         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
-        
-    }
-
-    .left-box {
-        flex: 2;
-    }
-
-    .right-box {
-        flex: 1;
-    }
-
-    input,
-    textarea {
-        width: 100%;
-        padding: 10px;
-        margin-top: 8px;
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-    }
-
-    button {
-        background: #1b1a53;
-        color: #fff;
-        padding: 12px;
-        width: 100%;
-        border: none;
-        border-radius: 8px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .payment-card {
-        border: 2px solid #1f1f5c;
-        border-radius: 15px;
-        background: #f7f7ff;
-        padding: 15px;
-    }
-
-    .payment-option {
-        display: block;
-        cursor: pointer;
-    }
-
-    .payment-option input {
-        display: none;
-    }
-
-    .payment-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        border-radius: 10px;
-        transition: 0.3s;
-    }
-
-    .payment-option input:checked+.payment-content {
-        background: rgba(31, 31, 92, 0.08);
-        border: 2px solid #1f1f5c;
-    }
-
-    .payment-content .left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .radio-circle {
-        width: 18px;
-        height: 18px;
-        border: 2px solid #1f1f5c;
-        border-radius: 50%;
-        display: inline-block;
-    }
-
-    .payment-option input:checked+.payment-content .radio-circle {
-        background: #1f1f5c;
-        box-shadow: inset 0 0 0 3px white;
-    }
-
-    .title {
-        font-weight: 600;
-        color: #1f1f5c;
-    }
-</style>
-
 <div class="checkout-wrapper">
 
     <!-- LEFT SIDE -->
     <div class="left-box">
 
-        <h3>Billing Details</h3>
+        <h4>Billing Details</h4>
 
         <form id="orderForm">
 
@@ -152,7 +52,7 @@
     <!-- RIGHT SIDE -->
     <div class="right-box">
 
-        <h2>Order Summary</h2>
+        <h4>Order Summary</h4>
 
         {% for item in cart_items %}
         <p>
@@ -163,18 +63,18 @@
 
         <hr>
         <h6>SubTotal: {{ total }}</h6>
-        <h3>Total: {{ total }}</h3>
+        <h4>Total: {{ total }}</h4>
 
         <a href="{% url 'pharmacy' %}" class="btn btn-outline-dark mt-3 w-100">
-            ⬅ Back to Pharmacy
+            Back to Pharmacy
         </a>
 
     </div>
 
 </div>
+{% endblock %}
 
-
-
+{% block extra_js %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
@@ -185,26 +85,23 @@
             let addressValue = $("#delivery_address").val();
 
             if (!addressValue || addressValue.trim() === "") {
-                alert("ایڈریس لکھنا ضروری ہے!");
+                alert("Please Enter Your Address First");
                 return;
             }
 
-            // // بٹن کو عارضی طور پر روک دیں
-            // let btn = $(this);
-            // btn.prop('disabled', true).text("Processing...");
 
             $.ajax({
-                url: "{% url 'place_order_api' %}", // ڈائریکٹ ٹیمپلیٹ ٹیگ استعمال کریں
+                url: "{% url 'place_order_api' %}", 
                 type: "POST",
                 headers: { "X-CSRFToken": "{{ csrf_token }}" },
                 data: { "address": addressValue },
                 success: function (response) {
-                    alert("کامیابی! آرڈر نمبر: " + response.order_id);
+                    alert("Order Booked! Your Order Number" + response.order_id);
                     window.location.href = "/api_pharmacy/order-success/";
                 },
                 error: function (xhr) {
                     let errorMsg = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : "سسٹم میں خرابی ہے";
-                    alert("ایرر: " + errorMsg);
+                    alert("Error: " + errorMsg);
                     btn.prop('disabled', false).text("PLACE ORDER");
                 }
             });
