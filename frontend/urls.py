@@ -12,4 +12,6 @@ urlpatterns = [
     path('ai-health-monitor/', views.ai_health_monitor_view, name='ai_health_monitor'),
     path('profile/', views.profile_view, name='profile'),
     path('lab-reports/',views.lab_reports_view, name='lab_reports'),
+    path('cart/', views.cart_page_view, name='cart_view'),
+
 ]

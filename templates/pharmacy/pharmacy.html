@@ -1,8 +1,228 @@
 {% extends 'base.html' %}
+{% load static %}
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script src="{% static 'js/cartcount.js' %}"></script>
 {% block content %}
-<div class="container py-5 text-center">
-    <h2 class="fw-bold" style="color: rgb(33, 32, 95);">Hello Pharmacy Page</h2>
-    <p>Pharmacy specific UI and components will go here.</p>
+<div class="bg-white border-bottom shadow-sm py-4">
+    <div class="container text-center">
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-8">
+                <div class="input-group shadow-sm rounded-pill overflow-hidden border">
+                    <span class="input-group-text bg-white border-0 ps-4"><i
+                            class="fas fa-search text-muted"></i></span>
+                    <input type="text" id="medSearch" class="form-control border-0 py-3"
+                        placeholder="Search for medicines...">
+                </div>
+            </div>
+        </div>
+        <div id="categoryContainer" class="d-flex gap-2 overflow-auto no-scrollbar pb-2 px-1"></div>
+    </div>
 </div>
+
+<div class="container py-5">
+    <div class="row g-4" id="productGrid">
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+    $(document).ready(function () {
+        // 1. Fetch dynamic categories first
+        fetchCategories();
+
+        // 2. Fetch all medicines
+        fetchMedicines();
+
+        // Search input logic...
+        $('#medSearch').on('keyup', function () {
+            let searchTerm = $(this).val();
+            $('.category-pill').removeClass('active');
+            $('.category-pill').first().addClass('active');
+            fetchMedicines(searchTerm, null);
+        });
+    });
+
+    /**
+     * NEW: Function to fetch categories from the database
+     */
+    function fetchCategories() {
+        $.ajax({
+            url: '/api_pharmacy/categories/', // This matches your router endpoint
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                let html = '<button class="category-pill active" onclick="filterMeds(\'All\', this)">All</button>';
+
+                // data will be the array of categories from your CategoryViewSet
+                data.forEach(category => {
+                    html += `<button class="category-pill" onclick="filterMeds('${category.name}', this)">${category.name}</button>`;
+                });
+
+                $('#categoryContainer').html(html);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching categories:", error);
+            }
+        });
+    }
+
+
+    /**
+     * Main function to fetch medicines from the API
+     * @param {string} search - The search term from input
+     * @param {string} category - The category name from filter buttons
+     */
+    function fetchMedicines(search = '', category = null) {
+        let url = '/api_pharmacy/medicines/';
+        let params = [];
+
+        if (search) params.push(`search=${encodeURIComponent(search)}`);
+        if (category && category !== 'All') params.push(`category__name=${encodeURIComponent(category)}`);
+
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                // DRF returns a paginated response; data.results contains the list
+                displayProducts(data.results || data);
+            },
+            error: function (xhr, status, error) {
+                console.error("API Error:", status, error);
+                $('#productGrid').html('<div class="col-12 text-center text-danger">Failed to load medicines. Please try again.</div>');
+            }
+        });
+    }
+
+    /**
+     * Updates the UI active state and filters by category
+     */
+    function filterMeds(category, btn) {
+        // Clear search input when filtering by category
+        $('#medSearch').val('');
+
+        // Update button UI active state
+        $('.category-pill').removeClass('active');
+        $(btn).addClass('active');
+
+        fetchMedicines('', category);
+    }
+
+    /**
+     * Renders medicine objects into HTML cards
+     */
+    function displayProducts(products) {
+        let html = '';
+
+        if (!products || products.length === 0) {
+            html = '<div class="col-12 text-center py-5"><h4 class="text-muted">No medicines found matching your criteria.</h4></div>';
+        } else {
+            products.forEach(product => {
+                // Set default image if product.image is null
+                let imgUrl = product.image ? product.image : '/static/images/aboutus/ourmission.jpg';
+
+                html += `
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="card h-100 border-0 shadow-sm product-card">
+                            <img src="${imgUrl}" class="card-img-top p-3" alt="${product.name}" style="height: 180px; object-fit: contain;">
+                            <div class="card-body text-center d-flex flex-column">
+                                <h6 class="fw-bold mb-1">${product.name}</h6>
+                                <p class="small text-muted mb-2">${product.category_name || ''}</p>
+                                <div class="h5 fw-bold mt-auto mb-3" style="color: #21205f;">Rs. ${parseFloat(product.price).toFixed(2)}</div>
+                                <button class="btn btn-outline-primary btn-sm rounded-pill w-100" 
+                                        onclick="addToCart(${product.id})">
+                                    <i class="fas fa-cart-plus me-1"></i> Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        $('#productGrid').html(html);
+    }
+
+    /**
+     * Placeholder for Cart functionality
+     */
+    // function addToCart(medicineId) {
+    //     console.log("Adding medicine ID to cart:", medicineId);
+    //     // Implement your cart POST request here
+    // }
+    function addToCart(medicineId) {
+    $.ajax({
+        url: "/api_pharmacy/cart/add/",
+        type: "POST",
+        contentType: "application/json",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        data: JSON.stringify({
+            medicine_id: medicineId
+        }),
+        success: function (response) {
+            console.log(response.message);
+            updateCartCount();
+        }
+    });
+}
+    
+</script>
+
+
+<style>
+    .category-pill {
+        white-space: nowrap;
+        padding: 8px 20px;
+        border-radius: 50px;
+        /* Professional blue border for inactive state */
+        border: 2px solid #21205f;
+        background: white;
+        color: #21205f;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        font-weight: 500;
+        outline: none;
+    }
+
+    /* Active state (when clicked/selected) and Hover state */
+    .category-pill.active,
+    .category-pill:hover {
+        background-color: #21205f !important;
+        /* Full blue background */
+        color: white !important;
+        /* Pure white text */
+        border-color: #21205f;
+        /* Matching border */
+        box-shadow: 0 4px 10px rgba(33, 32, 95, 0.2);
+        /* Soft shadow for depth */
+    }
+
+    /* Hide scrollbar logic */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    /* Product card animation */
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+</style>
 {% endblock %}
