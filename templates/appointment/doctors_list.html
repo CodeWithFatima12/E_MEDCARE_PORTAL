@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-blue: rgb(33, 32, 95);
+        --bg-gray: #f8f9fa;
+    }
+
+    {% comment %} .app-container { background: var(--bg-gray); min-height: 100vh; padding-bottom: 50px; } {% endcomment %}
+
+    /* Header Banner matching your Image */
+    .banner-card {
+        background: linear-gradient(90deg, var(--primary-blue) 0%, #3e3c91 100%);
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        color: white;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .banner-card h2 {
+        font-weight: 500;
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    #doctor-grid{
+       padding: 20px;
+       {% comment %} border:1px solid  #eee; {% endcomment %}
+       {% comment %} border-radius:10px; {% endcomment %}
+        {% comment %} box-shadow: 0 4px 15px rgba(0,0,0,0.1); {% endcomment %}
+
+       
+    }
+    /* Doctor Card matching your Mockup */
+    .doctor-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #eee;
+        padding: 20px 20px;
+        text-align: center;
+        transition: 0.3s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+    }
+    .doctor-card:hover {
+        box-shadow: 0 10px 25px rgba(160, 151, 151, 0.08);
+    }
+
+    .doc-img-wrapper {
+        width: 130px;
+        height: 130px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 2px solid #eee;
+    }
+    .doc-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+    .doc-name { font-size: 1rem; font-weight: 700; color: #333; margin-bottom: 5px; }
+    .doc-dept { 
+        font-size: 0.85rem; 
+        color: var(--primary-blue); 
+        text-transform: uppercase; 
+        font-weight: 700; 
+        letter-spacing: 0.5px;
+        margin-bottom: 25px;
+    }
+
+    /* Buttons exactly like your image */
+    .btn-profile {
+     font-size: 1rem;
+
+        background: white;
+        color: #888;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        font-weight: 500;
+        width: 100%;
+        margin-bottom: 12px;
+        display: block;
+        text-decoration: none;
+    }
+    .btn-profile:hover { background: #f9f9f9; color: #555; }
+
+    .btn-book {
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        font-weight: 500;
+        width: 100%;
+        display: block;
+        text-decoration: none;
+        font-size: 1rem;
+    }
+    .btn-book:hover { background: #1a194d; color: white; }
+    {% comment %} #doctor-grid.row > * {
+    margin-top: 0 !important;
+} {% endcomment %}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="app-container mb-4">
+    <div class="container">
+        <div class="banner-card">
+            <h2 id="dept-title">Loading...</h2>
+        </div>
+
+        <div id="doctor-grid" class="row g-4">
+            </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const deptId = urlParams.get('dept_id');
+     
+    $.ajax({
+        url: "/api/appointment/doctors-api/",
+        method: "GET",
+        data: { 'dept_id': deptId },
+        success: function(response) {
+            $('#dept-title').text(response.department_name);
+            let html = '';
+            
+            if(response.doctors.length > 0) {
+                response.doctors.forEach(doc => {
+                    // doc.id asli database ID hai (1, 2, 3 etc.)
+                    html += `
+                    <div class="col-md-4">
+                        <div class="doctor-card">
+                            <div>
+                                <div class="doc-img-wrapper">
+                                    <img src="${doc.profile_image}" onerror="this.src='/static/images/doctors/default.png'">
+                                </div>
+                                <div class="doc-name">${doc.name}</div>
+                                <div class="doc-dept">${doc.department_name}</div>
+                            </div>
+                            
+                            <div class="btn-actions">
+                                <a href="/api/appointment/profile/${doc.id}/" class="btn-profile">View Profile</a>
+                                <a href="/api/appointment/book/${doc.id}/" class="btn-book">Book Now</a>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            } else {
+                html = '<div class="col-12 text-center py-5"><h3>No specialists found.</h3></div>';
+            }
+            $('#doctor-grid').html(html);
+        }
+    });
+});
+</script>
+{% endblock %}

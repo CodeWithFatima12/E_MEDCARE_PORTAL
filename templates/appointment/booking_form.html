@@ -1,0 +1,307 @@
+{% extends 'base.html' %} {% load static %} {% block extra_css %}
+<style>
+  :root {
+    --primary-blue: rgb(33, 32, 95);
+  }
+  .banner-card {
+    background: linear-gradient(90deg, var(--primary-blue) 0%, #3e3c91 100%);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    color: white;
+    margin-top: 20px;
+    margin-bottom: 25px;
+  }
+  .banner-card h2 {
+    font-weight: 500;
+    margin: 0;
+    font-size: 1.5rem;
+}
+  .booking-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    margin-bottom: 50px;
+  }
+  .form-label {
+    font-weight: 700;
+    color: #333;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .slot-btn {
+    border: 1px solid #ddd;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: center;
+    flex: 1 1 100px;
+    font-size: 0.9rem;
+  }
+  .slot-btn.active {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+  }
+  .btn-confirm {
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .required-dot {
+    color: red;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container">
+  <div class="banner-card"><h2>Confirm Your Appointment</h2></div>
+  <div class="booking-card mx-auto" style="max-width: 850px">
+    <form id="bookingForm">
+      {% csrf_token %}
+      <input type="hidden" id="doctorId" value="{{ doctor.id }}" />
+      <input
+        type="hidden"
+        id="actualFee"
+        value="{{ doctor.consultation_fee }}"
+      />
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <label class="form-label">First Name</label>
+          <input
+            type="text"
+            class="form-control bg-light"
+            value="{{ request.user.first_name }}"
+            readonly
+          />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Last Name</label>
+          <input
+            type="text"
+            class="form-control bg-light"
+            value="{{ request.user.last_name }}"
+            readonly
+          />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Email Address</label>
+          <input
+            type="email"
+            class="form-control bg-light"
+            value="{{ request.user.email }}"
+            readonly
+          />
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Doctor</label>
+          <input
+            type="text"
+            class="form-control bg-light"
+            value="Dr. {{ doctor.user.get_full_name }}"
+            readonly
+          />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Consultation Fee</label>
+          <input
+            type="text"
+            class="form-control bg-light fw-bold text-primary"
+            value="Rs. {{ doctor.consultation_fee }}"
+            readonly
+          />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label"
+            >Enter Amount to Pay <span class="required-dot">*</span></label
+          >
+          <input
+            type="number"
+            id="userPaidFee"
+            class="form-control"
+            placeholder="Enter fee"
+            required
+          />
+        </div>
+
+        <div class="col-md-12">
+          <label class="form-label"
+            >1. Select Appointment Day
+            <span class="required-dot">*</span></label
+          >
+          <select id="daySelect" class="form-select" required>
+            <option value="">-- Choose Day --</option>
+            {% for day in available_days %}
+            <option value="{{ day.day_of_week }}">
+              {{ day.get_day_of_week_display }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-12">
+          <label class="form-label"
+            >2. Select Time Slot (AM/PM) <span class="required-dot">*</span>
+            <span id="displayDate" class="text-success ms-2"></span
+          ></label>
+          <div
+            id="slotsContainer"
+            class="d-flex flex-wrap gap-2 p-3 border rounded bg-light"
+          >
+            <small class="text-muted"
+              >Select a day to see available times.</small
+            >
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label"
+            >Appointment Type <span class="required-dot">*</span></label
+          >
+          <select id="appType" class="form-select" required>
+            <option value="in_hospital">In-Hospital (Physical)</option>
+            <option value="online">Online Consultation (Video)</option>
+          </select>
+        </div>
+
+        <div class="col-md-12">
+          <label class="form-label"
+            >Medical History / Symptoms
+            <span class="required-dot">*</span></label
+          >
+          <textarea
+            id="history"
+            class="form-control"
+            rows="3"
+            placeholder="Describe your health issue..."
+            required
+          ></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-confirm">
+        Confirm & Book Appointment
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %} {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  let selectedStartTime = null;
+  let bookingDate = null;
+
+  $("#daySelect").change(function () {
+    const day = $(this).val();
+    const docId = $("#doctorId").val();
+    if (!day) {
+      $("#slotsContainer").html("");
+      return;
+    }
+
+    $.get(
+      `/api/appointment/get-slots/`,
+      { doctor_id: docId, day: day },
+      function (data) {
+        bookingDate = data.raw_date;
+        $("#displayDate").text("Date: " + data.formatted_date);
+        let html =
+          data.slots.length > 0
+            ? ""
+            : '<p class="text-danger fw-bold">All slots booked for this day.</p>';
+
+        data.slots.forEach((s) => {
+          // value mein 24h time hai, display mein AM/PM
+          html += `<div class="slot-btn" data-value="${s.value}">${s.display}</div>`;
+        });
+        $("#slotsContainer").html(html);
+        selectedStartTime = null; // Reset selection
+      },
+    );
+  });
+
+  $(document).on("click", ".slot-btn", function () {
+    $(".slot-btn").removeClass("active");
+    $(this).addClass("active");
+    selectedStartTime = $(this).data("value"); // 24h format backend ke liye
+  });
+
+  $("#bookingForm").submit(function (e) {
+    e.preventDefault();
+
+    const actualFee = parseFloat($("#actualFee").val());
+    const userPaid = parseFloat($("#userPaidFee").val());
+    console.log($("#actualFee").val());
+    console.log("Actual:", actualFee);
+    console.log("Paid:", userPaid);
+
+    if (isNaN(userPaid)) {
+      Swal.fire("Error", "Please enter valid amount.", "error");
+      return;
+    }
+
+    // 1. Fee Check
+    if (userPaid !== actualFee) {
+      Swal.fire(
+        "Payment Error",
+        `Minimum fee for this doctor is Rs. ${actualFee}. Please enter the correct amount.`,
+        "error",
+      );
+      return;
+    }
+
+    // 2. Slot Check
+    if (!selectedStartTime) {
+      Swal.fire("Missing Information", "Please select a time slot.", "warning");
+      return;
+    }
+
+    const payload = {
+      doctor_id: $("#doctorId").val(),
+      date: bookingDate,
+      start_time: selectedStartTime, // 24h format
+      appointment_type: $("#appType").val(),
+      medical_history: $("#history").val(),
+      paid_amount: userPaid,  // ✅ THIS IS MISSING
+
+    };
+
+    $.ajax({
+      url: "/api/appointment/confirm-booking/",
+      method: "POST",
+      headers: { "X-CSRFToken": "{{ csrf_token }}" },
+      data: JSON.stringify(payload),
+      contentType: "application/json",
+      success: function () {
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Appointment booked successfully.",
+        }).then(() => {
+          window.location.href = "/home";
+        });
+      },
+      error: function (xhr) {
+        let msg =
+          xhr.responseJSON && xhr.responseJSON.message
+            ? xhr.responseJSON.message
+            : "Something went wrong.";
+        Swal.fire("Failed", msg, "error");
+      },
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-blue: rgb(33, 32, 95);
+        --accent-green: #57B959;
+        --bg-gray: #f8f9fa;
+    }
+
+    .profile-section { padding: 50px 0; background: var(--bg-gray); min-height: 100vh; }
+
+    /* Left Profile Card */
+    .doctor-sidebar-card {
+        background: white;
+        border-radius: 20px;
+        padding: 35px 25px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 1px solid #edf2f7;
+    }
+    .profile-img-box {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        padding: 5px;
+        border: 3px solid var(--accent-green);
+        overflow: hidden;
+    }
+    .profile-img-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+    .doc-full-name { font-size: 1.5rem; font-weight: 800; color: var(--primary-blue); margin-bottom: 5px; }
+    .doc-full-dept { font-size: 0.9rem; font-weight: 600; color: #718096; text-transform: uppercase; margin-bottom: 20px; }
+
+    .fee-badge {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        padding: 8px 15px;
+        border-radius: 10px;
+        font-weight: 700;
+        display: inline-block;
+        margin-bottom: 25px;
+    }
+
+    /* Schedule Grid */
+    .schedule-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    .schedule-title { font-weight: 800; color: var(--primary-blue); margin-bottom: 25px; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; }
+
+    .day-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+    }
+    .day-item {
+        background: #fdfdfd;
+        border: 1px solid #e2e8f0;
+        padding: 15px;
+        border-radius: 15px;
+        text-align: center;
+        transition: 0.2s;
+    }
+    .day-item.available { border-top: 4px solid var(--accent-green); background: white; }
+    .day-name { font-weight: 700; color: #2d3748; margin-bottom: 5px; }
+    .day-time { font-size: 0.8rem; color: #4a5568; font-weight: 500; }
+
+    .btn-book-final {
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: 0.3s;
+        margin-top: 15px;
+        display: block;
+        text-decoration: none;
+    }
+    .btn-book-final:hover { background: #1a194d; color: white; transform: translateY(-2px); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-section">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="doctor-sidebar-card">
+                    <div class="profile-img-box">
+                        <img id="main-img" src="" alt="Doctor">
+                    </div>
+                    <h2 id="main-name" class="doc-full-name">Loading...</h2>
+                    <p id="main-dept" class="doc-full-dept">Specialist</p>
+                    
+                    <div class="fee-badge">
+                        Consultation Fee <br> <span id="main-fee">--</span>
+                    </div>
+
+                    <div class="text-start mb-4">
+                        <small class="text-muted d-block">Experience</small>
+                        <strong id="main-exp" class="text-dark">--</strong>
+                    </div>
+
+                    <a href="/api/appointment/book/{{ doc_id }}/" class="btn-book-final">Book Appointment</a>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="schedule-card">
+                    <h4 class="schedule-title"><i class="fas fa-calendar-alt me-2"></i> Weekly Schedule</h4>
+                    <div id="schedule-container" class="day-grid">
+                        </div>
+
+                    <div class="mt-5">
+                        <h5 class="fw-bold text-dark mb-3">About Doctor</h5>
+                        <p class="text-muted" style="line-height: 1.7;">
+                         <span class="doc-insert-name"></span> is a dedicated professional in the field of <span id="insert-dept"></span>. 
+                            With a commitment to patient care and clinical excellence, they offer specialized consultations during the hours listed above.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+$(document).ready(function() {
+    const docId = "{{ doc_id }}";
+    
+    console.log("Doctor ID:", docId); 
+    if (!docId || docId === "" || docId === "None") {
+        console.error("Doctor ID is missing!");
+        return;
+    }
+    
+    $.ajax({
+        url: `/api/appointment/doctor-detail-api/${docId}/`,
+        method: "GET",
+        success: function(data) {
+            // Fill sidebar
+            $('#main-img').attr('src', data.profile_image);
+            $('#main-name, .doc-insert-name').text(data.name);
+            $('#main-dept, #insert-dept').text(data.department_name);
+            $('#main-fee').text("Rs. " + data.consultation_fee);
+            $('#main-exp').text(data.experience + " Years of Experience");
+
+            // Fill Schedule
+            let schedHtml = '';
+            data.schedules.forEach(s => {
+                schedHtml += `
+                <div class="day-item ${s.is_available ? 'available' : ''}">
+                    <div class="day-name">${s.day_display}</div>
+                    <div class="day-time">${s.start_time} - ${s.end_time}</div>
+                    <small class="text-success fw-bold">${s.is_available ? 'Open' : 'Closed'}</small>
+                </div>`;
+            });
+            $('#schedule-container').html(schedHtml);
+        }
+    });
+});
+</script>
+{% endblock %}
