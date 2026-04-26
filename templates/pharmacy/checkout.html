@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pharmacy/checkout.css' %}">   
+{% endblock %}
+
+{% block content %}
+<div class="checkout-wrapper">
+
+    <!-- LEFT SIDE -->
+    <div class="left-box">
+
+        <h4>Billing Details</h4>
+
+        <form id="orderForm">
+
+            <input type="text" value="{{ user.first_name }}" readonly placeholder="First Name">
+            <input type="text" value="{{ user.last_name }}" readonly placeholder="Last Name">
+            <input type="email" value="{{ user.email }}" readonly placeholder="Email">
+            <textarea id="delivery_address" required placeholder="Enter Delivery Address"></textarea>
+            <p><b>Payment Method:</b> Cash on Delivery</p>
+            <!-- <h5 class="mb-3 fw-bold">Payment Method</h5> -->
+
+
+            <label class="payment-option">
+                <input type="radio" name="payMethod" checked>
+
+                <div class="payment-content">
+                    <div class="left">
+                        <span class="radio-circle"></span>
+                        <span class="title">Cash on Delivery (COD)</span>
+                    </div>
+
+
+                </div>
+            </label>
+
+
+            <p class="small text-muted mt-2 ps-1">
+                Pay in cash when your medicines arrive at your doorstep.
+            </p>
+
+            <button type="button" id="placeOrderBtn">
+                PLACE ORDER
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right-box">
+
+        <h4>Order Summary</h4>
+
+        {% for item in cart_items %}
+        <p>
+            {{ item.medicine.name }} x {{ item.quantity }}
+            = {{ item.medicine.price }}
+        </p>
+        {% endfor %}
+
+        <hr>
+        <h6>SubTotal: {{ total }}</h6>
+        <h4>Total: {{ total }}</h4>
+
+        <a href="{% url 'pharmacy' %}" class="btn btn-outline-dark mt-3 w-100">
+            Back to Pharmacy
+        </a>
+
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#placeOrderBtn").on("click", function (e) {
+            e.preventDefault();
+
+            let addressValue = $("#delivery_address").val();
+
+            if (!addressValue || addressValue.trim() === "") {
+                alert("Please Enter Your Address First");
+                return;
+            }
+
+
+            $.ajax({
+                url: "{% url 'place_order_api' %}", 
+                type: "POST",
+                headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                data: { "address": addressValue },
+                success: function (response) {
+                    alert("Order Booked! Your Order Number" + response.order_id);
+                    window.location.href = "/api_pharmacy/order-success/";
+                },
+                error: function (xhr) {
+                    let errorMsg = (xhr.responseJSON && xhr.responseJSON.error) ? xhr.responseJSON.error : "سسٹم میں خرابی ہے";
+                    alert("Error: " + errorMsg);
+                    btn.prop('disabled', false).text("PLACE ORDER");
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

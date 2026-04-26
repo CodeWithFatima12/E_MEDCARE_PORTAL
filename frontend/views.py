@@ -41,3 +41,6 @@ def profile_view(request):
 def lab_reports_view(request):
     """Render the lab reports page"""
     return render(request, 'lab/lab_reports.html')
+
+def cart_page_view(request):
+    return render(request, 'pharmacy/cart.html') 
