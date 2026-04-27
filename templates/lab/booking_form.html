@@ -1,0 +1,103 @@
+
+
+{% extends 'base.html' %}
+
+{% block title %}Confirm Booking - E-Medcare{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Readonly inputs styling */
+    .form-control[readonly] {
+        background-color: #f8f9fa !important;
+        border: 1px solid #dee2e6;
+        cursor: not-allowed;
+    }
+    .card {
+        border: none;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        border-radius: 20px;
+    }
+    .card-header {
+        background: linear-gradient(45deg, #21205f, #4a499e);
+        border-radius: 20px 20px 0 0 !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mx-auto mb-4" style="max-width: 650px;" role="alert">
+                <strong>{% if message.tags == 'error' %}⚠️ Alert:{% else %}✅ Success:{% endif %}</strong> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card mx-auto" style="max-width: 650px;">
+        <div class="card-header text-white text-center py-4">
+            <h2 class="mb-0">🧪 Confirm Your Booking</h2>
+        </div>
+        
+        <div class="card-body p-5">
+            <form method="POST" action="" >
+                {% csrf_token %}
+                
+                <h5 class="text-muted mb-3 border-bottom pb-2">Patient Information</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">First Name</label>
+                        <input type="text" class="form-control bg-light" value="{{ user.first_name }}" readonly>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Last Name</label>
+                        <input type="text" class="form-control bg-light" value="{{ user.last_name }}" readonly>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold">Email</label>
+                    <input type="email" class="form-control bg-light" value="{{ user.email }}" readonly>
+                </div>
+
+                <h5 class="text-muted mb-3 border-bottom pb-2">Test Details</h5>
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold">Test Name</label>
+                        <input type="text" class="form-control bg-light" value="{{ test.name }}" readonly style="color: #21205f; font-weight: bold;">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Price</label>
+                        <input type="text" class="form-control bg-light" value="Rs. {{ test.price }}" readonly style="color: #28a745; font-weight: bold;">
+                    </div>
+                </div>
+
+                <h5 class="text-muted mb-3 border-bottom pb-2">Select Appointment Date</h5>
+                <div class="mb-4">
+                    <label class="form-label fw-bold" style="color: #e67e22;">Choose Date *</label>
+                    <input type="date" name="test_date" id="test_date_picker" class="form-control border-warning" required>
+                    <div id="date-help-text" class="form-text mt-2 text-muted">
+                        Lab timings are subject to availability (Monday to Friday).
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-lg text-white" style="background-color: #21205f;">
+                        Confirm Appointment
+                    </button>
+                    <a href="{% url 'lab_reports' %}" class="btn btn-link text-muted text-center text-decoration-none">Back to Tests</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('test_date_picker').setAttribute('min', today);
+    });
+   
+</script>
+{% endblock %}

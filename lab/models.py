@@ -8,6 +8,9 @@ class LabTest(models.Model):
     instructions = models.TextField(help_text="e.g. fasting required", blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
+    class Meta:
+        db_table = 'lab_labtest'
+        
     def __str__(self):
         return self.name
 
