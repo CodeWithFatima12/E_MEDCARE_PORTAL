@@ -13,8 +13,7 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('lab-reports/',views.lab_view, name='lab_reports'),
 
-    #path('lab-reports/',views.lab_reports_view, name='lab_reports'),
+    # path('lab-reports/',views.lab_reports_view, name='lab_reports'),
     path('cart/', views.cart_page_view, name='cart_view'),
-
 
 ]
