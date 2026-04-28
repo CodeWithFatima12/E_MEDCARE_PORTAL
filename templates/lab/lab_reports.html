@@ -10,14 +10,7 @@
 {% block content %}
 
 <div class="container-fluid">
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>✅ Success!</strong> {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-    {% endif %}
+    
 
     <div class="container py-5">
     <div class="text-center mb-5">
@@ -59,7 +52,7 @@ fetch('/api/lab/lab-reports/?json=1', {
                     <strong>Instruction:</strong> ${test.instructions}
                 </div>` : ''}
     <a href="/api/lab/book-test/${test.id}/" class="btn-book" style="text-decoration:none; display:inline-block; text-align:center;">
-                Book Appointment
+                Book Slot
             </a>            </div>
         `;
     });
