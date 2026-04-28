@@ -1,0 +1,142 @@
+
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+    }
+
+    .cart-wrapper {
+        display: flex;
+        max-width: 1200px;
+        margin: 50px auto;
+        gap: 30px;
+        padding: 0 20px;
+    }
+
+    /* LEFT COLUMN: SHOPPING CART */
+    .cart-main {
+        flex: 2;
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .cart-item {
+        display: grid;
+        grid-template-columns: 1fr 2fr 1fr 1fr;
+        align-items: center;
+        padding: 20px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .item-details h4 { margin: 0; color: #333; font-size: 1.1rem }
+    .item-details span { color: #888; font-size: 0.7rem; }
+
+    .qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .qty-btn {
+        background: #f1f1f1;
+        border: none;
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .remove-link {
+        color: #ff4d4d;
+        font-size: 0.8rem;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+        margin-top: 5px;
+    }
+
+    /* RIGHT COLUMN: ORDER SUMMARY */
+    .cart-summary {
+        flex: 1;
+        background: #f1f3f6;
+        padding: 30px;
+        border-radius: 8px;
+        height: fit-content;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        color: #555;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #ddd;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .btn-checkout {
+        width: 100%;
+         background: #1b1a53;
+        /* background: #5c5be5; */
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+    /* .btn-checkout:hover { background: #4a49c9; } */
+
+    .btn-back {
+        height: 50px;
+        display: inline-block;
+        margin-top: 50px;
+        background: #1b1a53;
+        color: #eaeaf4;
+        text-decoration: none;
+        padding: 10px 10px;
+        font-weight: bold;
+    }
+    /* Mobile Responsive for Cart */
+@media (max-width: 768px) {
+    .cart-wrapper {
+        flex-direction: column; /* Items niche aa jayenge */
+        margin: 20px auto;
+        padding: 0 10px;
+    }
+
+    .cart-item {
+        grid-template-columns: 1fr 1fr; /* 4 columns ki jagah 2 kar dein */
+        gap: 10px;
+        text-align: center;
+    }
+
+    .qty-controls {
+        justify-content: center;
+    }
+
+    .cart-summary {
+        margin-top: 20px;
+        width: 100%;
+    }
+}

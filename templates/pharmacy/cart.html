@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/pharmacy/cart.css' %}">    
+{% endblock %}
+
+{% block content %}
+<div class="cart-wrapper">
+    <div class="cart-main">
+        <div class="cart-header">
+            <h3>Shopping Cart</h3>
+            <h6 id="item-count-top">0 Items</h6>
+        </div>
+        
+        <div id="cartContainer">
+            </div>
+
+        <a href="{% url 'pharmacy' %}" class="btn-back">
+            Continue Shopping
+        </a>
+    </div>
+
+    <div class="cart-summary">
+        <h4>Order Summary</h4>
+        <hr>
+        <div class="summary-row">
+            <span>ITEMS <span id="item-count-summary">0</span></span>
+            <span>Rs. <span id="subtotal">0</span></span>
+        </div>
+        <div class="summary-row">
+            <span>SHIPPING</span>
+            <span class="text-success" style="color:green; font-weight:bold;">FREE</span>
+        </div>
+        
+        <div class="total-row">
+            <span>TOTAL COST</span>
+            <span>Rs. <span id="totalPrice">0</span></span>
+        </div>
+
+        <button class="btn-checkout" onclick="proceedToCheckout()">
+            CHECKOUT
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static 'js/pharmacy/cartcount.js' %}"></script>
+<script>
+    function loadCart() {
+        $.ajax({
+            url: "/api_pharmacy/cart/",
+            type: "GET",
+            success: function (data) {
+                let html = "";
+                let totalItems = 0;
+
+                if (data.items.length === 0) {
+                    html = "<p>Your cart is empty.</p>";
+                } else {
+                    data.items.forEach(item => {
+                        totalItems += item.quantity;
+                        html += `
+                        <div class="cart-item">
+                            <div class="item-details">
+                                <h4>${item.medicine_name}</h4>
+                                <span onclick="removeItem(${item.id})" class="remove-link">Remove</span>
+                            </div>
+                            <div class="qty-controls">
+                                <button class="qty-btn" onclick="changeQty(${item.id}, 'decrease')">-</button>
+                                <span>${item.quantity}</span>
+                                <button class="qty-btn" onclick="changeQty(${item.id}, 'increase')">+</button>
+                            </div>
+                            <div style="font-weight:bold">Rs. ${item.medicine_price}</div>
+                            <div style="font-weight:bold">Rs. ${(item.medicine_price * item.quantity).toFixed(2)}</div>
+                        </div>
+                        `;
+                    });
+                }
+
+                $("#cartContainer").html(html);
+                
+                $("#item-count-top").text(totalItems + " Items");
+                $("#item-count-summary").text(totalItems);
+                $("#subtotal").text(data.total);
+                $("#totalPrice").text(data.total);
+                
+                if (typeof updateCartCount === 'function') {
+                    updateCartCount();
+                }
+            }
+        });
+    }
+
+    function changeQty(itemId, action) {
+        $.ajax({
+            url: "/api_pharmacy/cart/update_qty/",
+            type: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+            data: { item_id: itemId, action: action },
+            success: function () { loadCart(); }
+        });
+    }
+
+    function removeItem(itemId) {
+        $.ajax({
+            url: "/api_pharmacy/cart/remove/",
+            type: "POST",
+            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+            data: { item_id: itemId },
+            success: function () { loadCart(); }
+        });
+    }
+
+    $(document).ready(function () {
+        loadCart();
+    });
+
+    function proceedToCheckout() {
+        let totalPrice = $("#totalPrice").text();
+        if (parseFloat(totalPrice) <= 0 || totalPrice === "") {
+            alert("Your cart is empty please add something to cart");
+        } else {
+            window.location.href = "{% url 'checkout_page' %}";
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,49 @@
+
+    .category-pill {
+        white-space: nowrap;
+        padding: 8px 20px;
+        border-radius: 50px;
+        /* Professional blue border for inactive state */
+        border: 2px solid #21205f;
+        background: white;
+        color: #21205f;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        font-weight: 500;
+        outline: none;
+    }
+
+    /* Active state (when clicked/selected) and Hover state */
+    .category-pill.active,
+    .category-pill:hover {
+        background-color: #21205f !important;
+        /* Full blue background */
+        color: white !important;
+        /* Pure white text */
+        border-color: #21205f;
+        /* Matching border */
+        box-shadow: 0 4px 10px rgba(33, 32, 95, 0.2);
+        /* Soft shadow for depth */
+    }
+
+    /* Hide scrollbar logic */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    /* Product card animation */
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+   

@@ -21,12 +21,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls), 
     path('', include('frontend.urls')),
     # OTHER MODULES
     # path('ai/', include('ai_module.urls')),
+    path('api_pharmacy/', include('pharmacy.urls')),
     path('api/appointment/', include('appointment.urls')),
-    # path('pharmacy/', include('pharmacy.urls')),
     path('accounts/', include('accounts.urls')),
     path('api/lab/', include('lab.urls')),
     
