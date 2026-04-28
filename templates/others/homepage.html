@@ -22,7 +22,53 @@
             </div>
         </div>
     </div>
+<div class="container my-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold" style="color: rgb(33, 32, 95);">Access our healthcare facilities with just one click.</h2>
+        <div class="mx-auto" style="width: 60px; height: 3px; background-color: rgb(33, 32, 95); border-radius: 2px;"></div>
+    </div>
 
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4 col-sm-6">
+            <a href="{% url 'lab_reports' %}" class="text-decoration-none">
+                <div class="quick-link-card text-center p-4">
+                    <div class="icon-box mb-3">
+                        <i class="fas fa-microscope fa-3x"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2 text-dark">Lab Services</h4>
+                    <p class="text-muted small">Schedule lab visits and view medical reports online.</p>
+                    <span class="btn-link-text">Explore Now <i class="fas fa-arrow-right ms-1"></i></span>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 col-sm-6">
+            <a href="{% url 'appointment' %}" class="text-decoration-none">
+                <div class="quick-link-card text-center p-4">
+                    <div class="icon-box mb-3">
+                        <i class="fas fa-calendar-plus fa-3x"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2 text-dark">Appointments</h4>
+                    <p class="text-muted small">Book your lab tests or specialist consultations.</p>
+                    <span class="btn-link-text">Schedule Visit <i class="fas fa-arrow-right ms-1"></i></span>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-4 col-sm-6">
+            <a href="{% url 'pharmacy' %}" class="text-decoration-none">
+                <div class="quick-link-card text-center p-4">
+                    <div class="icon-box mb-3">
+                       <i class="fas fa-pills fa-3x"></i>
+                    </div>
+                    <h4 class="fw-bold mb-2 text-dark">E-Pharmacy</h4>
+                    <p class="text-muted small">Order medicines & healthcare products.</p>
+                    <span class="btn-link-text">Get Medicines<i class="fas fa-arrow-right ms-1"></i></span>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
     <script>
         const textTarget = document.getElementById("snappy-typing");
         const phrases = ["Our Mission: You Stay Healthy.", "AI-Powered Medical Solutions.", "Healthcare at Your Fingertips."];

@@ -4,13 +4,59 @@
 {% block title %}Lab - E-Medcare{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/lab/lab_report.css' %}">
+ 
 {% endblock %}
 {% block content %}
-<div class="container py-5 text-center">
-    <h2 class="fw-bold" style="color: rgb(33, 32, 95);">Lab Reports</h2>
-    <p>Lab reports specific UI and components will go here.</p>
+
+<div class="container-fluid">
+    
+
+    <div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold" style="color: rgb(33, 32, 95);">Lab Reports & Tests</h2>
+        <p class="text-muted">Select from our wide range of professional lab diagnostic services.</p>
+    </div>
+
+    <div class="test-grid" id="test-container">
+        
+        
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
+<script>
+// Humne same URL par fetch maari hai bas '?json=1' add kiya hai
+fetch('/api/lab/lab-reports/?json=1', {
+    headers: {
+        'x-requested-with': 'XMLHttpRequest'
+    }
+})
+.then(response => response.json())
+.then(data => {
+    let container = document.getElementById('test-container');
+    container.innerHTML = ""; // Pehle container khali karein
+
+    data.tests.forEach(test => {
+        container.innerHTML += `
+            <div class="test-card">
+                <div class="test-header">
+                    <span class="icon">🔬</span>
+                    <div class="price">Rs. ${test.price}</div>
+                </div>
+                <h3 class="test-name">${test.name}</h3>
+                <p class="test-desc">${test.description}</p>
+                ${test.instructions ? `
+                <div class="test-instructions">
+                    <strong>Instruction:</strong> ${test.instructions}
+                </div>` : ''}
+    <a href="/api/lab/book-test/${test.id}/" class="btn-book" style="text-decoration:none; display:inline-block; text-align:center;">
+                Book Slot
+            </a>            </div>
+        `;
+    });
+})
+.catch(error => console.error('Error:', error));
+</script>
 {% endblock %}

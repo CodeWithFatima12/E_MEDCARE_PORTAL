@@ -28,7 +28,7 @@ urlpatterns = [
     path('api_pharmacy/', include('pharmacy.urls')),
     path('api/appointment/', include('appointment.urls')),
     path('accounts/', include('accounts.urls')),
-    # path('lab/', include('lab.urls')),
+    path('api/lab/', include('lab.urls')),
     
     
    

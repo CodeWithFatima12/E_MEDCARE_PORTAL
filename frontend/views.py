@@ -43,7 +43,7 @@ def profile_view(request):
     """Render the profile page"""
     return render(request, 'others/dashboard.html')
 
-def lab_reports_view(request):
+def lab_view(request):
     """Render the lab reports page"""
     return render(request, 'lab/lab_reports.html')
 

@@ -1,0 +1,49 @@
+/* Readonly inputs styling */
+    .form-control[readonly] {
+        background-color: #f8f9fa !important;
+        border: 1px solid #dee2e6;
+        cursor: not-allowed;
+    }
+    .card {
+        border: none;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        border-radius: 20px;
+    }
+    .card-header {
+        background: linear-gradient(45deg, #21205f, #4a499e);
+        border-radius: 20px 20px 0 0 !important;
+    }
+    .modal-content {
+        border-radius: 20px;
+        border: none;
+    }
+    .modal-header {
+        border-radius: 20px 20px 0 0;
+    }
+    
+    /* Specific Color Updates */
+    .text-custom-navy {
+        color: rgb(33, 32, 95) !important;
+    }
+    .btn-custom-print {
+        background-color: rgb(33, 32, 95) !important;
+        border-color: rgb(33, 32, 95) !important;
+        color: white !important;
+    }
+    .btn-custom-print:hover {
+        background-color: rgb(25, 24, 75) !important;
+        opacity: 0.9;
+    }
+
+    /* Print Specific Styling */
+    @media print {
+        body * { visibility: hidden; }
+        #printableArea, #printableArea * { visibility: visible; }
+        #printableArea {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            padding: 20px;
+        }
+    }
