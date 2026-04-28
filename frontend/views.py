@@ -3,7 +3,8 @@
 
 # def home(request):
 #     return render(request, 'home.html')
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from ai_module.forms import FoodCategoryForm
 
 def signin_view(request):
     """Render the signin page"""
@@ -30,9 +31,13 @@ def appointment_view(request):
     """Render the appointment page"""
     return render(request, 'appointment/appointment.html')
 
+# def ai_health_monitor_view(request):
+#     """Render the AI health monitor page"""
+#     return render(request, 'ai_module/DietForm.html', {
+#         "form": form
+#     })
 def ai_health_monitor_view(request):
-    """Render the AI health monitor page"""
-    return render(request, 'ai_module/ai_health_monitor.html')
+    return redirect('food_preferences')
 
 def profile_view(request):
     """Render the profile page"""

@@ -96,7 +96,7 @@
                 headers: { "X-CSRFToken": "{{ csrf_token }}" },
                 data: { "address": addressValue },
                 success: function (response) {
-                    alert("Order Booked! Your Order Number" + response.order_id);
+                    alert("Take a Screenshot of Your Order id. Your Order Number is" + response.order_id );
                     window.location.href = "/api_pharmacy/order-success/";
                 },
                 error: function (xhr) {

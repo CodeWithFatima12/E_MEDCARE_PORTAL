@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AI Health Monitor - E-Medcare{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    
+
+<style>
+:root {
+    --emed-primary: #21205F;
+    --emed-bg: #f4f7f9;
+}
+
+body {
+    background-color: var(--emed-bg);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+.main-card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    margin-top: 40px;
+}
+
+.header-banner {
+    background-color: var(--emed-primary);
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.header-banner h1 {
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+.health-badge {
+    background: #fff;
+    border-left: 5px solid var(--emed-primary);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.accordion-item {
+    border: none;
+    margin-bottom: 10px;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+}
+
+.accordion-button {
+    font-weight: 600;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: rgba(33,32,95,0.05);
+    color: var(--emed-primary);
+}
+
+.meal-box {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    border-top: 3px solid var(--emed-primary);
+    height: 100%;
+}
+
+.meal-title {
+    color: var(--emed-primary);
+    font-weight: bold;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+
+/* PRINT FIXED CSS */
+@media print {
+
+    @page {
+        margin: 10mm;
+    }
+
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+    }
+
+    .header-banner,
+    .btn,
+    hr,
+    .health-badge,
+    .accordion-header button::after {
+        display: none !important;
+    }
+
+    .container,
+    .main-card,
+    .card-body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+
+    .main-card {
+        margin-top: 0 !important;
+    }
+
+    body::before {
+        content: "Personalized Diet Schedule";
+        display: block;
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        color: #21205F;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #21205F;
+    }
+
+    .accordion-collapse {
+        display: block !important;
+        height: auto !important;
+        visibility: visible !important;
+    }
+
+    .accordion-button {
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
+    }
+
+    .accordion-item {
+        margin-bottom: 20px !important;
+        page-break-inside: avoid;
+    }
+
+    .row {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 10px !important;
+    }
+
+    .col-md-4 {
+        width: 33.33% !important;
+        flex: 0 0 33.33% !important;
+    }
+
+    .meal-box {
+        border: 1px solid #ddd !important;
+        border-top: 3px solid #21205F !important;
+        padding: 10px !important;
+    }
+
+    .text-muted {
+        color: #000 !important;
+        opacity: 1 !important;
+        font-size: 11pt !important;
+    }
+}
+</style>
+
+
+</head>
+<body>
+
+<div class="container mb-5">
+    <div class="main-card card bg-white">
+        <div class="header-banner">
+            <h1>Your Customized Diet Plan</h1>
+            <!-- <p class="mb-0 opacity-75">Advanced AI Dietary Analysis</p> -->
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+
+
+            {% if status_message or diet_plan %}
+                <hr class="my-5">
+
+                {% if status_message %}
+                    <div class="health-badge shadow-sm">
+                        <h5 class="fw-bold text-primary mb-2">Clinical Health Evaluation</h5>
+                        <p class="mb-0 text-dark">{{ status_message }}</p>
+                    </div>
+                {% endif %}
+
+                {% if diet_plan %}
+                    {% if diet_plan.Error %}
+                        <div class="alert alert-danger">{{ diet_plan.Error }}</div>
+                    {% else %}
+                        <h3 class="mb-4 fw-bold">Daily Diet Schedule</h3>
+                        <div class="accordion" id="dietPlanAccordion">
+                            {% for day, meals in diet_plan.items %}
+                                <div class="accordion-item shadow-sm">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}">
+                                            🗓️ &nbsp; {{ day }}
+                                        </button>
+                                    </h2>
+                                    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}">
+                                        <div class="accordion-body bg-light">
+                                            <div class="row g-3">
+                                                <div class="col-md-4">
+                                                    <div class="meal-box shadow-sm">
+                                                        <div class="meal-title">Breakfast</div>
+                                                        <div class="text-muted small">{{ meals.Breakfast }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="meal-box shadow-sm">
+                                                        <div class="meal-title">Lunch</div>
+                                                        <div class="text-muted small">{{ meals.Lunch }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="meal-box shadow-sm">
+                                                        <div class="meal-title">Dinner</div>
+                                                        <div class="text-muted small">{{ meals.Dinner }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mt-5 text-center">
+                            <button class="btn btn-outline-dark btn-lg px-5 shadow-sm" onclick="window.print()">
+                                📄 Export Meals to PDF
+                            </button>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

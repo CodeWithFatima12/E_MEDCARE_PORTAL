@@ -24,7 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls), 
     path('', include('frontend.urls')),
     # OTHER MODULES
-    # path('ai/', include('ai_module.urls')),
+    path('ai/', include('ai_module.urls')),
     path('api_pharmacy/', include('pharmacy.urls')),
     path('api/appointment/', include('appointment.urls')),
     path('accounts/', include('accounts.urls')),
