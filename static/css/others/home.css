@@ -44,3 +44,55 @@
       }
   }
 
+/* Color Palette: rgb(33, 32, 95) */
+
+.quick-link-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid rgba(33, 32, 95, 0.1);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    height: 100%;
+}
+
+.quick-link-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 45px rgba(33, 32, 95, 0.15);
+    border-color: rgb(33, 32, 95);
+}
+
+.icon-box {
+    color: rgb(33, 32, 95);
+    transition: transform 0.3s ease;
+}
+
+.quick-link-card:hover .icon-box {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.btn-link-text {
+    color: rgb(33, 32, 95);
+    font-weight: 600;
+    font-size: 0.9rem;
+    position: relative;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.btn-link-text::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: rgb(33, 32, 95);
+    transition: width 0.3s ease;
+}
+
+.quick-link-card:hover .btn-link-text::after {
+    width: 100%;
+}
+
+/* Optional: FontAwesome loading ensure */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');

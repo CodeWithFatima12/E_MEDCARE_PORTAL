@@ -8,6 +8,9 @@ class LabTest(models.Model):
     instructions = models.TextField(help_text="e.g. fasting required", blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
+    class Meta:
+        db_table = 'lab_labtest'
+        
     def __str__(self):
         return self.name
 
@@ -40,9 +43,11 @@ class LabBooking(models.Model):
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='lab_bookings')
     test = models.ForeignKey(LabTest,on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, null=True, blank=True)
     booking_date = models.DateTimeField(auto_now_add=True)
     test_date = models.DateField()
     status = models.CharField(max_length=20,choices=STATUS_CHOICES,default='booked' )
+    
 
     def __str__(self):
         return f"{self.user.username} - {self.test.name}"

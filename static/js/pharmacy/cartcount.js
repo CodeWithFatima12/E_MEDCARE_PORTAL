@@ -1,6 +1,21 @@
 // cartcount.js
-  document.addEventListener("DOMContentLoaded", function () {
-        updateCartCount();  // 🔥 ہر page پر run ہوگا
+  window.addEventListener("pageshow", function (event) {
+    // persist true means the page was loaded from cache (back button)
+    updateCartCount(); 
+});
+
+window.onpageshow = function(event) {
+    // اگر پیج براؤزر کے کیشے (Cache) سے لوڈ ہوا ہے
+    if (event.persisted) {
+        // تو زبردستی پیج کو دوبارہ لوڈ کرو تاکہ تازہ ڈیٹا نظر آئے
+        window.location.reload();
+    } else {
+        // ورنہ صرف کاؤنٹ اپ ڈیٹ کر دو
+        updateCartCount();
+    }
+};
+document.addEventListener("DOMContentLoaded", function () {
+        updateCartCount();  // 
     }); 
 function updateCartCount() {
     $.ajax({

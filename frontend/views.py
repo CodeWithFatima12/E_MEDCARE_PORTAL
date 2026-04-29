@@ -7,6 +7,7 @@
 import datetime
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from ai_module.forms import FoodCategoryForm
 
 @login_required
 def profile_view(request):
@@ -74,15 +75,19 @@ def appointment_view(request):
     """Render the appointment page"""
     return render(request, 'appointment/appointment.html')
 
+# def ai_health_monitor_view(request):
+#     """Render the AI health monitor page"""
+#     return render(request, 'ai_module/DietForm.html', {
+#         "form": form
+#     })
 def ai_health_monitor_view(request):
-    """Render the AI health monitor page"""
-    return render(request, 'ai_module/ai_health_monitor.html')
+    return redirect('food_preferences')
 
 # def profile_view(request):
 #     """Render the profile page"""
 #     return render(request, 'others/dashboard.html')
 
-def lab_reports_view(request):
+def lab_view(request):
     """Render the lab reports page"""
     return render(request, 'lab/lab_reports.html')
 
