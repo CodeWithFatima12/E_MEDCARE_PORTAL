@@ -1,0 +1,119 @@
+ {% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ai_module/graph.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="stats-header">
+        <h5>Health Progress Tracking</h5>
+        <p class="text-muted">Monitor your glucose levels and historical health trends.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="chart-card text-center">
+                <div class="btn-group-custom">
+                    <button class="btn-range active" onclick="handleButtonClick(this, 7)">Weekly</button>
+                    <button class="btn-range" onclick="handleButtonClick(this, 30)">Monthly</button>
+                    <!-- <button class="btn-range" onclick="handleButtonClick(this, 'year')">Yearly Analysis</button> -->
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="healthChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    let myChart;
+
+    // UI Helper: Switch active button class
+    function handleButtonClick(btn, days) {
+        $('.btn-range').removeClass('active');
+        $(btn).addClass('active');
+        updateChart(days);
+    }
+
+    function updateChart(days) {
+        $.ajax({
+            url: "/ai/api/glucose-data/",
+            type: "GET",
+            data: { "range": days },
+            success: function (data) {
+                const labels = data.map(item => item.date);
+                const values = data.map(item => item.glucose_level);
+                // Switch to Bar chart for 'year', Line for others
+                const type = (days === 'year') ? 'bar' : 'line';
+                renderChart(labels, values, type);
+            },
+            error: function (xhr) {
+                console.error("Error:", xhr.responseText);
+            }
+        });
+    }
+
+    function renderChart(labels, values, type) {
+        const ctx = document.getElementById('healthChart').getContext('2d');
+        
+        if (myChart) { myChart.destroy(); }
+
+        // Create Gradient for the line chart
+        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(33, 32, 95, 0.2)');
+        gradient.addColorStop(1, 'rgba(33, 32, 95, 0.0)');
+
+        myChart = new Chart(ctx, {
+            type: type,
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Glucose Level (mg/dL)',
+                    data: values,
+                    borderColor: '#21205f',
+                    backgroundColor: type === 'line' ? gradient : '#21205f',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#21205f',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: true,
+                    tension: 0.4 // Curves the line
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false } // We have the title/badge already
+                },
+                scales: {
+                    y: {
+                        grid: { color: '#f0f0f0' },
+                        ticks: { color: '#999' },
+                        beginAtZero: type === 'bar'
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#999' }
+                    }
+                }
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        updateChart(7);
+    });
+</script>
+{% endblock %} 

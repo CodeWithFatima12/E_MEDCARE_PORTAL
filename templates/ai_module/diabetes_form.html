@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Diabetes Diagnostic - E-Medcare{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ai_module/diabetes_form.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container mb-5">
+    <div class="main-card mx-auto" style="max-width: 900px;">
+        <div class="header-banner">
+            <h4> AI Diabetes Diagnostic Tool</h4>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row g-4">
+                    {% for field in form %}
+                    <div class="col-md-6">
+                        <label class="form-label ">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                        <small class="text-muted d-block mt-1">{{ field.help_text }}</small>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="btn btn-generate w-100 mt-5 shadow-sm">
+                    Generate AI Diagnostic Report
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if result %}
+<div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-header bg-{{ result.color }} text-white">
+                <h5 class="modal-title">Diagnostic Report: {{ result.name }}</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-5">
+                <p class="text-muted mb-1 text-uppercase small fw-bold">AI Prediction Status</p>
+                <h2 class="display-6 fw-bold text-{{ result.color }}">{{ result.status }}</h2>
+
+                <div class="alert alert-light border mt-4 text-start">
+                    <p class="mb-0 small">
+                        <strong>Note:</strong> AI-generated result.
+                        <b>Consult a doctor</b> for official diagnosis.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var myModal = new bootstrap.Modal(document.getElementById('resultModal'));
+        myModal.show();
+    });
+</script>
+{% endif %}
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
+{% endblock %}

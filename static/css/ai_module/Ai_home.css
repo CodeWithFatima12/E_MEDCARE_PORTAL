@@ -1,0 +1,90 @@
+.hero-section {
+    padding: 40px 20px;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.hero-title {
+    color: #1a0b51;
+    font-size: 2.0rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+}
+
+/* The Grid Layout */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* Individual Card Styling */
+.service-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 40px 30px;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* The "Middle Card" Highlight effect from your image */
+.service-card.highlighted {
+    border: 2px solid #dfdfe8;
+    transform: scale(1.05); /* Slightly larger */
+}
+
+.service-card:hover {
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    transform: translateY(-10px);
+        border: 2px solid #0d0d39;
+
+}
+
+/* Icon Styles */
+.card-icon {
+    font-size: 3rem;
+    color: #21205f;
+    margin-bottom: 20px;
+}
+
+.card-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.card-desc {
+    color: #666;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 25px;
+    min-height: 50px;
+}
+
+/* The Link/Arrow Styles */
+.card-link {
+    color: #21205f;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: gap 0.2s;
+}
+
+.card-link:hover {
+    gap: 12px; /* Moves the arrow slightly on hover */
+    color: #3f4271;
+}
+
+.card-link i {
+    font-size: 0.8rem;
+}

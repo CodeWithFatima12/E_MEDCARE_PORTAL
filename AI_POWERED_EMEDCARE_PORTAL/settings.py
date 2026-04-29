@@ -18,6 +18,11 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 # define API key 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# settings.py
+GEMINI_API_KEY = "AIzaSyBlNQY144wTACrVcg3j8UizeUNVjk23mKE"
+
+# Path to the folder containing AI models
+SAVED_MODELS_DIR = os.path.join(BASE_DIR, 'saved_models')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/

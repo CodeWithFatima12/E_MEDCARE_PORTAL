@@ -1,0 +1,76 @@
+
+    :root {
+        --primary-dark: #21205f;
+        --accent-blue: #3f4271;
+        --light-bg: #f8f9fa;
+    }
+
+    body {
+        background-color: var(--light-bg);
+    }
+
+    .stats-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-top: 20px;
+    }
+
+    .stats-header h5 {
+        color: var(--primary-dark);
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+
+    /* Main Dashboard Card */
+    .chart-card {
+        background: #ffffff;
+        border-radius: 20px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        margin-bottom: 50px;
+    }
+
+    /* Range Selector Buttons */
+    .btn-group-custom {
+        background: #f0f0f5;
+        padding: 5px;
+        border-radius: 50px;
+        display: inline-flex;
+        margin-bottom: 25px;
+    }
+
+    .btn-range {
+        border: none;
+        background: transparent;
+        padding: 8px 25px;
+        border-radius: 50px;
+        font-weight: 600;
+        color: #666;
+        transition: all 0.3s ease;
+    }
+
+    .btn-range.active, .btn-range:hover {
+        background: var(--primary-dark);
+        color: white;
+        box-shadow: 0 4px 10px rgba(33, 32, 95, 0.3);
+    }
+
+    /* Canvas Container */
+    .chart-container {
+        position: relative;
+        height: 400px;
+        width: 100%;
+    }
+
+    /* Decorative Badge */
+    .health-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        background: rgba(38, 34, 97, 0.1);
+        color: var(--primary-dark);
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }

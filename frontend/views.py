@@ -36,8 +36,11 @@ def appointment_view(request):
 #     return render(request, 'ai_module/DietForm.html', {
 #         "form": form
 #     })
+# def ai_health_monitor_view(request):
+#     return redirect('food_preferences')
 def ai_health_monitor_view(request):
-    return redirect('food_preferences')
+    # Use the subfolder path
+    return render(request, 'ai_module/Ai_home.html') 
 
 def profile_view(request):
     """Render the profile page"""

@@ -1,17 +1,20 @@
-import google.generativeai as genai
+from google import genai  # UPDATED: New SDK import
 from django.conf import settings
 import json
-
-# 1. Configure
-genai.configure(api_key="AIzaSyBlNQY144wTACrVcg3j8UizeUNVjk23mKE")
 
 def generate_diet_plan(data_dict):
     """
     Accepts the dictionary from form.get_data_for_gemini()
+    Uses the new google-genai SDK.
     """
+    # --- Step 0: Initialize Client ---
+    # It is safer to use settings.GEMINI_API_KEY if you have it defined there
+    api_key = getattr(settings, "GEMINI_API_KEY", "IzaSyBlNQY144wTACrVcg3j8UizeUNVjk23mKE")
+    client = genai.Client(api_key=api_key)
+
     # Extract data
     age = data_dict.get('age')
-    height_inches = data_dict.get('height')  # <-- CHANGED: Now expects total inches (e.g., 63)
+    height_inches = data_dict.get('height') 
     weight = data_dict.get('weight')  
     gender = data_dict.get('gender')         
     goal = data_dict.get('goal')             # 'lose' or 'gain'
@@ -32,8 +35,6 @@ def generate_diet_plan(data_dict):
     bmi = round(weight / (height_m ** 2), 1)
     
     # --- Step 2: Sanity Check (Safety Shield) ---
-    # This prevents the AI from generating a plan if the user 
-    # accidentally enters '5.3' instead of '63'.
     if bmi > 60 or bmi < 10:
         return {
             "error": f"Invalid height/weight combination. Calculated BMI: {bmi}. "
@@ -52,7 +53,6 @@ def generate_diet_plan(data_dict):
     else:
         current_status = "overweight"
 
-   
     # CASE 1: User is Normal weight
     if current_status == "normal":
         if goal != "maintain":
@@ -110,15 +110,18 @@ def generate_diet_plan(data_dict):
     """
 
     # --- Step 5: AI Generation ---
-    available_model = "gemini-2.5-flash"
     try:
-        model = genai.GenerativeModel(available_model)
-        response = model.generate_content(
-            prompt,
-            generation_config={"response_mime_type": "application/json"}
+        # UPDATED: New syntax for content generation
+        response = client.models.generate_content(
+            model='gemini-2.0-flash', 
+            contents=prompt,
+            config={
+                'response_mime_type': 'application/json',
+            }
         )
         
-        text = response.text
+        # Clean the response text (the new SDK is better at returning clean strings)
+        text = response.text.strip()
         if "```json" in text:
             text = text.split("```json")[1].split("```")[0]
         

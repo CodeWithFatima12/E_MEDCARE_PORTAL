@@ -4,184 +4,11 @@
 {% block title %}AI Health Monitor - E-Medcare{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ai_module/DietForm.css' %}">
 {% endblock %}
 
 {% block content %}
-
-
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    
-    <style>
-        /* E-MedCare Branding: #21205F */
-        :root {
-            --emed-primary: #21205F;
-            --emed-bg: #f4f7f9;
-        }
-
-        body {
-            background-color: var(--emed-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-        }
-
-        .main-card {
-            border: none;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            margin-top: 40px;
-        }
-
-        /* Top Header Banner */
-        .header-banner {
-            background-color: var(--emed-primary);
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .header-banner h1 {
-            font-weight: 500;
-            letter-spacing: -1px;
-            margin-bottom: 5px;
-            font-size: 1.5rem !important;
-        }
-
-        /* Form Styling */
-        .form-label {
-            font-weight: 600;
-            color: var(--emed-primary);
-        }
-
-        .form-control, .form-select {
-            border: 1px solid #ced4da;
-            padding: 10px;
-            border-radius: 6px;
-        }
-
-        .form-control:focus {
-            border-color: var(--emed-primary);
-            box-shadow: 0 0 0 0.25rem rgba(33, 32, 95, 0.1);
-        }
-
-        .btn-generate {
-            background-color: var(--emed-primary);
-            border: none;
-            padding: 14px;
-            font-weight:400;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-
-        .btn-generate:hover {
-            background-color: #1a194d;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(33, 32, 95, 0.2);
-        }
-
-        /* Results & Accordion */
-        .health-badge {
-            background-color: #fff;
-            border-left: 5px solid var(--emed-primary);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-
-        .accordion-item {
-            border: none;
-            margin-bottom: 10px;
-            border-radius: 8px !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
-
-        .accordion-button {
-            font-weight: 600;
-            border-radius: 8px !important;
-        }
-
-        .accordion-button:not(.collapsed) {
-            background-color: rgba(33, 32, 95, 0.05);
-            color: var(--emed-primary);
-        }
-
-        .meal-box {
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            border-top: 3px solid var(--emed-primary);
-            height: 100%;
-        }
-
-        .meal-title {
-            color: var(--emed-primary);
-            font-weight: bold;
-            font-size: 0.95rem;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
-
-        /* PRINT LOGIC: THE "CLEAN PDF" ENGINE */
-        @media print {
-            /* 1. Hide everything except the days and meals */
-            .header-banner, form, hr, .btn, .health-badge, .mt-4.text-center, .accordion-header button::after {
-                display: none !important;
-            }
-
-            body { background: white !important; }
-            .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            .main-card { box-shadow: none !important; margin-top: 0 !important; }
-
-            /* 2. Force Accordion to remain open for the PDF */
-            .accordion-collapse {
-                display: block !important;
-                height: auto !important;
-                visibility: visible !important;
-            }
-
-            /* 3. Style text for clarity on paper */
-            .text-muted {
-                color: #000 !important;
-                opacity: 1 !important;
-                font-size: 11pt !important;
-            }
-
-            /* 4. PDF Header */
-            body::before {
-                content: "Personalized Diet Schedule";
-                display: block;
-                text-align: center;
-                font-size: 20pt;
-                font-weight: bold;
-                color: #21205F;
-                margin-bottom: 40px;
-                border-bottom: 2px solid #21205F;
-                padding-bottom: 10px;
-            }
-
-            /* 5. Force 3-Column Layout on PDF */
-            .row {
-                display: flex !important;
-                flex-wrap: nowrap !important;
-            }
-            .col-md-4 {
-                width: 33.33% !important;
-                flex: 0 0 33.33% !important;
-                border: none !important;
-            }
-            .meal-box {
-                border: 1px solid #eee !important;
-                border-top: 3px solid #21205F !important;
-            }
-            
-            .accordion-item {
-                page-break-inside: avoid; /* Keeps a single day on one page */
-                margin-bottom: 30px !important;
-            }
-        }
-        
-    </style>
-
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"> -->
 <div class="container mb-5">
     <div class="main-card card bg-white">
         <div class="header-banner">
@@ -194,10 +21,10 @@
                 {% csrf_token %}
                 <div class="row g-4">
                     {% for field in form %}
-                        <div class="col-12 col-lg-4">
-                            <label class="form-label">{{ field.label }}</label>
-                            {{ field }}
-                        </div>
+                    <div class="col-12 col-lg-4">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
                     {% endfor %}
                 </div>
                 <button type="submit" class="btn btn-generate btn-primary btn-lg w-100 mt-4 shadow-sm">
@@ -205,13 +32,13 @@
                 </button>
             </form>
 
-           
+
+        </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-{% endblock %}
+    {% endblock %}
 
-{% block extra_js %}
-{% endblock %}
+    {% block extra_js %}
+    {% endblock %}

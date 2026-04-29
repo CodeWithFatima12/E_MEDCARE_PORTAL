@@ -1,0 +1,49 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ai_module/Ai_home.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="hero-container">
+        <h4 class="hero-title">Access our AI Health Services</h4>
+        <p class="hero-subtitle mb-5">
+            Advanced machine learning technology tailored for your daily health management.
+        </p>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="card-icon">
+                    <i class="fas fa-microscope"></i>
+                </div>
+                <h4 class="card-name">Health Screening</h4>
+                <p class="card-desc">Analyze diabetes risks using advanced ML algorithms.</p>
+                <a href="{% url 'diabetes_check' %}" class="card-link">Explore Now <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            <div class="service-card highlighted">
+                <div class="card-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                <h4 class="card-name">Smart Meal Planner</h4>
+                <p class="card-desc">Personalized dietary needs and healthy meal preferences.</p>
+                <a href="{% url 'food_preferences' %}" class="card-link">Start Planning <i class="fas fa-arrow-right"></i></a>
+            </div>
+
+            {% if user.is_authenticated %}
+            <div class="service-card">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h4 class="card-name">Health Trends</h4>
+                <p class="card-desc">Visualize your glucose levels and progress over time.</p>
+                <a href="{% url 'health_stats' %}" class="card-link">View Trends <i class="fas fa-arrow-right"></i></a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
