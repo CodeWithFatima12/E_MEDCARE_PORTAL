@@ -55,6 +55,32 @@ class TimeSlot(models.Model):
 
 
 # Appointment Table
+# class Appointment(models.Model):
+
+#     STATUS_CHOICES = (
+#         ('pending', 'Pending'),
+#         ('confirmed', 'Confirmed'),
+#         ('completed', 'Completed'),
+#         ('cancelled', 'Cancelled'),
+#     )
+
+#     TYPE_CHOICES = (
+#         ('online', 'Online'),
+#         ('in_hospital', 'In Hospital'),
+#     )
+
+#     patient = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='patient_appointments')
+#     doctor = models.ForeignKey('Doctor',on_delete=models.CASCADE,related_name='doctor_appointments')
+#     slot = models.ForeignKey('TimeSlot', on_delete=models.CASCADE)
+#     appointment_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+#     medical_history = models.TextField(blank=True)
+#     status = models.CharField(max_length=20,choices=STATUS_CHOICES,default='pending')
+#     meeting_link = models.URLField(null=True, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f"{self.patient.username} - {self.doctor.user.username}"
+
 class Appointment(models.Model):
 
     STATUS_CHOICES = (
@@ -69,14 +95,27 @@ class Appointment(models.Model):
         ('in_hospital', 'In Hospital'),
     )
 
-    patient = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='patient_appointments')
-    doctor = models.ForeignKey('Doctor',on_delete=models.CASCADE,related_name='doctor_appointments')
+    GENDER_CHOICES = (
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Other', 'Other'),
+    )
+
+    # Existing fields
+    patient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='patient_appointments')
+    doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE, related_name='doctor_appointments')
     slot = models.ForeignKey('TimeSlot', on_delete=models.CASCADE)
     appointment_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     medical_history = models.TextField(blank=True)
-    status = models.CharField(max_length=20,choices=STATUS_CHOICES,default='pending')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     meeting_link = models.URLField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    #  NEW FIELDS WITH null=True, blank=True
+    patient_name = models.CharField(max_length=100, null=True, blank=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
+    age = models.IntegerField(null=True, blank=True)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
 
     def __str__(self):
         return f"{self.patient.username} - {self.doctor.user.username}"

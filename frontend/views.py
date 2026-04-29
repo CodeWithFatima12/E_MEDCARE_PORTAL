@@ -3,9 +3,53 @@
 
 # def home(request):
 #     return render(request, 'home.html')
-from django.shortcuts import render,redirect
+# from django.shortcuts import render
+import datetime
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from ai_module.forms import FoodCategoryForm
 
+@login_required
+def profile_view(request):
+
+    # ✅ Superuser / staff admin panel
+    if request.user.is_superuser or request.user.is_staff:
+        return redirect('/admin/')
+
+    # ⏰ Greeting logic
+    hour = datetime.datetime.now().hour
+
+    if hour < 12:
+        greet = "Good Morning"
+    elif hour < 18:
+        greet = "Good Afternoon"
+    else:
+        greet = "Good Evening"
+
+    user = request.user
+    role = user.role
+
+    # 👇 shared context (important)
+    context = {
+        'greet': greet,
+        'name': user.get_full_name() if user.get_full_name() else user.username,
+        'email': user.email,
+        'role': role
+    }
+
+    # 👇 role-based dashboards
+    if role == 'doctor':
+        return render(request, 'appointment/doctor_dashboard.html', context)
+
+    elif role == 'patient':
+        return render(request, 'appointment/patient_dashboard.html', context)
+
+    elif role == 'user':
+        return render(request, 'others/dashboard.html', context)
+
+    else:
+        return render(request, 'others/homepage.html')
+    
 def signin_view(request):
     """Render the signin page"""
     return render(request, 'accounts/signin.html')
@@ -42,9 +86,9 @@ def ai_health_monitor_view(request):
     # Use the subfolder path
     return render(request, 'ai_module/Ai_home.html') 
 
-def profile_view(request):
-    """Render the profile page"""
-    return render(request, 'others/dashboard.html')
+# def profile_view(request):
+#     """Render the profile page"""
+#     return render(request, 'others/dashboard.html')
 
 def lab_view(request):
     """Render the lab reports page"""

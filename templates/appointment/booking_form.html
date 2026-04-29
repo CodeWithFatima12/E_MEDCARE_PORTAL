@@ -16,7 +16,7 @@
     font-weight: 500;
     margin: 0;
     font-size: 1.5rem;
-}
+  }
   .booking-card {
     background: white;
     border-radius: 12px;
@@ -62,6 +62,22 @@
   .required-dot {
     color: red;
   }
+  {% comment %} .gender-group {
+    display: flex;
+    gap: 20px;
+    margin-top: 5px;
+    flex-wrap: wrap;
+  } {% endcomment %}
+  .gender-group label {
+    font-weight: normal;
+    text-transform: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .gender-group input {
+    margin-right: 5px;
+    cursor: pointer;
+  }
 </style>
 {% endblock %} {% block content %}
 <div class="container">
@@ -77,34 +93,86 @@
       />
 
       <div class="row g-4">
-        <div class="col-md-4">
-          <label class="form-label">First Name</label>
+        <!-- Full Name Field -->
+        <div class="col-md-6">
+          <label class="form-label"
+            >Full Name <span class="required-dot">*</span></label
+          >
           <input
             type="text"
-            class="form-control bg-light"
-            value="{{ request.user.first_name }}"
-            readonly
-          />
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Last Name</label>
-          <input
-            type="text"
-            class="form-control bg-light"
-            value="{{ request.user.last_name }}"
-            readonly
-          />
-        </div>
-        <div class="col-md-4">
-          <label class="form-label">Email Address</label>
-          <input
-            type="email"
-            class="form-control bg-light"
-            value="{{ request.user.email }}"
-            readonly
+            id="patientFullName"
+            class="form-control"
+            placeholder="Enter your full name"
+            required
           />
         </div>
 
+        <!-- Age Field -->
+        <div class="col-md-3">
+          <label class="form-label"
+            >Age <span class="required-dot">*</span></label
+          >
+          <input
+            type="number"
+            id="patientAge"
+            class="form-control"
+            placeholder="Age"
+            min="1"
+            max="120"
+            required
+          />
+        </div>
+
+        <!-- Gender Field -->
+        {% comment %}
+        <div class="col-md-3">
+          <label class="form-label"
+            >Gender <span class="required-dot">*</span></label
+          >
+          <div class="gender-group">
+            <label
+              ><input type="radio" name="gender" value="Male" required />
+              Male</label
+            >
+            <label
+              ><input type="radio" name="gender" value="Female" /> Female</label
+            >
+            <label
+              ><input type="radio" name="gender" value="Other" /> Other</label
+            >
+          </div>
+        </div>
+        {% endcomment %}
+
+        <!-- Gender Field -->
+        <div class="col-md-3">
+          <label class="form-label"
+            >Gender <span class="required-dot">*</span></label
+          >
+          <select id="patientGender" class="form-select" required>
+            <option value="">-- Select Gender --</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <!-- Phone Number Field -->
+        <div class="col-md-6">
+          <label class="form-label"
+            >Phone Number <span class="required-dot">*</span></label
+          >
+          <input
+            type="tel"
+            id="patientPhone"
+            class="form-control"
+            placeholder="10-digit mobile number"
+            pattern="[0-9]{10}"
+            required
+          />
+          <small class="text-muted">Enter 10-digit mobile number</small>
+        </div>
+
+        <!-- Doctor Field (Read-only) -->
         <div class="col-md-6">
           <label class="form-label">Doctor</label>
           <input
@@ -114,6 +182,9 @@
             readonly
           />
         </div>
+
+        {% comment %}
+        <!-- Consultation Fee (Read-only) -->
         <div class="col-md-3">
           <label class="form-label">Consultation Fee</label>
           <input
@@ -123,6 +194,8 @@
             readonly
           />
         </div>
+
+        <!-- Amount to Pay -->
         <div class="col-md-3">
           <label class="form-label"
             >Enter Amount to Pay <span class="required-dot">*</span></label
@@ -135,7 +208,9 @@
             required
           />
         </div>
+        {% endcomment %}
 
+        <!-- Select Day -->
         <div class="col-md-12">
           <label class="form-label"
             >1. Select Appointment Day
@@ -151,6 +226,7 @@
           </select>
         </div>
 
+        <!-- Select Time Slot -->
         <div class="col-md-12">
           <label class="form-label"
             >2. Select Time Slot (AM/PM) <span class="required-dot">*</span>
@@ -165,7 +241,32 @@
             >
           </div>
         </div>
+        <!-- Consultation Fee (Read-only) -->
+        <div class="col-md-3">
+          <label class="form-label">Consultation Fee</label>
+          <input
+            type="text"
+            class="form-control bg-light fw-bold text-primary"
+            value="Rs. {{ doctor.consultation_fee }}"
+            readonly
+          />
+        </div>
 
+        <!-- Amount to Pay -->
+        <div class="col-md-3">
+          <label class="form-label"
+            >Enter Amount to Pay <span class="required-dot">*</span></label
+          >
+          <input
+            type="number"
+            id="userPaidFee"
+            class="form-control"
+            placeholder="Enter fee"
+            required
+          />
+        </div>
+
+        <!-- Appointment Type -->
         <div class="col-md-6">
           <label class="form-label"
             >Appointment Type <span class="required-dot">*</span></label
@@ -176,6 +277,7 @@
           </select>
         </div>
 
+        <!-- Medical History -->
         <div class="col-md-12">
           <label class="form-label"
             >Medical History / Symptoms
@@ -224,11 +326,10 @@
             : '<p class="text-danger fw-bold">All slots booked for this day.</p>';
 
         data.slots.forEach((s) => {
-          // value mein 24h time hai, display mein AM/PM
           html += `<div class="slot-btn" data-value="${s.value}">${s.display}</div>`;
         });
         $("#slotsContainer").html(html);
-        selectedStartTime = null; // Reset selection
+        selectedStartTime = null;
       },
     );
   });
@@ -236,24 +337,45 @@
   $(document).on("click", ".slot-btn", function () {
     $(".slot-btn").removeClass("active");
     $(this).addClass("active");
-    selectedStartTime = $(this).data("value"); // 24h format backend ke liye
+    selectedStartTime = $(this).data("value");
   });
 
   $("#bookingForm").submit(function (e) {
     e.preventDefault();
 
+    // New field validations
+    const patientFullName = $("#patientFullName").val().trim();
+    const patientAge = $("#patientAge").val();
+    const patientGender = $("#patientGender").val();
+
+    const patientPhone = $("#patientPhone").val().trim();
+
+    if (!patientFullName) {
+      Swal.fire("Error", "Please enter your full name", "error");
+      return;
+    }
+    if (!patientAge || patientAge < 1 || patientAge > 120) {
+      Swal.fire("Error", "Please enter a valid age (1-120)", "error");
+      return;
+    }
+    if (!patientGender) {
+      Swal.fire("Error", "Please select your gender", "error");
+      return;
+    }
+    if (!patientPhone || !/^\d{10}$/.test(patientPhone)) {
+      Swal.fire("Error", "Please enter a valid 10-digit phone number", "error");
+      return;
+    }
+
     const actualFee = parseFloat($("#actualFee").val());
     const userPaid = parseFloat($("#userPaidFee").val());
-    console.log($("#actualFee").val());
-    console.log("Actual:", actualFee);
-    console.log("Paid:", userPaid);
 
     if (isNaN(userPaid)) {
       Swal.fire("Error", "Please enter valid amount.", "error");
       return;
     }
 
-    // 1. Fee Check
+    // Fee Check
     if (userPaid !== actualFee) {
       Swal.fire(
         "Payment Error",
@@ -263,7 +385,7 @@
       return;
     }
 
-    // 2. Slot Check
+    // Slot Check
     if (!selectedStartTime) {
       Swal.fire("Missing Information", "Please select a time slot.", "warning");
       return;
@@ -272,11 +394,15 @@
     const payload = {
       doctor_id: $("#doctorId").val(),
       date: bookingDate,
-      start_time: selectedStartTime, // 24h format
+      start_time: selectedStartTime,
       appointment_type: $("#appType").val(),
       medical_history: $("#history").val(),
-      paid_amount: userPaid,  // ✅ THIS IS MISSING
-
+      paid_amount: userPaid,
+      // New fields
+      patient_name: patientFullName,
+      phone_number: patientPhone,
+      age: patientAge,
+      gender: patientGender,
     };
 
     $.ajax({

@@ -1,19 +1,164 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block title %}Dashboard - E-Medcare{% endblock %}
 
-
-{% block extra_css %}
-{% endblock %}
-
 {% block content %}
-<div class="container py-5">
-    <div class="text-center py-5">
-        <h1 class="fw-bold" style="color: rgb(33, 32, 95);">Welcome to Your Dashboard</h1>
-        <p class="text-muted">Manage your health information and appointments in one place.</p>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    /* Sab kuch is class ke andar wrap kiya hai taake Navbar kharab na ho */
+    .em-dash-scope {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #fcfdfe;
+        min-height: 100vh;
+        margin-top: -20px; /* Navbar ke saath gap adjust karne ke liye */
+        padding: 60px 20px;
+    }
+
+    .em-dash-scope .dashboard-wrapper {
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    /* Elegant Banner */
+    .em-dash-scope .welcome-banner {
+        background: rgb(33, 32, 95);
+        color: white;
+        padding: 25px;
+        border-radius: 32px;
+        margin-bottom: 20px;
+        margin-top: 50px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(33, 32, 95, 0.15);
+        border: none;
+    }
+
+    .em-dash-scope .welcome-banner::after {
+        content: '';
+        position: absolute;
+        right: -50px;
+        top: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+    }
+
+    .em-dash-scope .banner-text h3 { 
+        margin: 0; 
+        font-size: 32px; 
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: #ffffff;
+    }
+
+    .em-dash-scope .banner-text p { 
+        margin: 10px 0 0 0; 
+        font-size: 16px;
+        opacity: 0.85;
+    }
+
+    .em-dash-scope .heart-icon-box {
+        {% comment %} background: rgba(255, 255, 255, 0.15); {% endcomment %}
+        width: 85px;
+        height: 85px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 24px;
+        backdrop-filter: blur(8px);
+        {% comment %} border: 1px solid rgba(255, 255, 255, 0.2); {% endcomment %}
+    }
+
+    .em-dash-scope .pulse-anim {
+        animation: emHeartBeat 1.5s infinite;
+    }
+
+    @keyframes emHeartBeat {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    /* Profile Section */
+    .em-dash-scope .profile-content {
+        text-align: center;
+        padding: 20px 0;
+    }
+
+    .em-dash-scope .label-caps {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: #94a3b8;
+        font-weight: 700;
+        letter-spacing: 2.5px;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .em-dash-scope .user-name-big {
+        font-size: 40px;
+        font-weight: 800;
+        color: rgb(33, 32, 95);
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        line-height: 1.1;
+    }
+
+    .em-dash-scope .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 30px;
+        padding: 10px 20px;
+        background: #ecfdf5;
+        color: #059669;
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1px solid #d1fae5;
+    }
+
+    .em-dash-scope .live-dot {
+        width: 8px;
+        height: 8px;
+        background: #10b981;
+        border-radius: 50%;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+</style>
+
+<div class="em-dash-scope">
+    <div class="dashboard-wrapper">
+        
+        <div class="welcome-banner">
+            <div class="banner-text">
+                <h3>{{ greet }}</h3>
+                <p>Welcome To AI Powered E-Medcare portal </p>
+                <p>Your health, our priority.</p>
+            </div>
+            <div class="heart-icon-box">
+                <i class="fa-solid fa-heart-pulse fa-3x pulse-anim text-white"></i>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <span class="label-caps">Authenticated User</span>
+            <h1 class="user-name-big">{{ name }}</h1>
+            
+            {% comment %} <div class="status-pill">
+                <span class="live-dot"></span> VERIFIED PATIENT
+            </div> {% endcomment %}
+        </div>
+        
     </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
 {% endblock %}
