@@ -1,0 +1,926 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra_css %}
+<style>
+  :root {
+    --primary-blue: rgb(33, 32, 95);
+    --primary-light: #f0f2ff;
+    --success-green: #10b981;
+    --warning-orange: #f59e0b;
+    --danger-red: #ef4444;
+  }
+
+  .dashboard-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, #3e3c91 100%);
+    padding: 15px 0;
+    margin-bottom: 30px;
+    color: white;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+  }
+
+  .custom-tabs {
+    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 25px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .custom-tab {
+    background: none;
+    border: none;
+    padding: 12px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    transition: 0.3s;
+  }
+
+  .custom-tab.active {
+    color: var(--primary-blue);
+  }
+
+  .custom-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--primary-blue);
+    border-radius: 2px;
+  }
+
+  .appointment-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #edf2f7;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .appointment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .patient-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+  }
+
+  .patient-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 5px;
+  }
+
+  .patient-email {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-bottom: 5px;
+  }
+
+  .appointment-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .badge-online {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+
+  .badge-in_hospital {
+    background: #e8f5e9;
+    color: #388e3c;
+  }
+
+  .badge-confirmed {
+    background: #e8f5e9;
+    color: #388e3c;
+  }
+
+  .badge-completed {
+    background: #e3f2fd;
+    color: #1976d2;
+  }
+
+  .badge-cancelled {
+    background: #ffebee;
+    color: #d32f2f;
+  }
+
+  .appointment-date {
+    background: var(--primary-light);
+    padding: 8px 15px;
+    border-radius: 12px;
+    text-align: center;
+    display: inline-block;
+  }
+
+  .date-day {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+  }
+
+  .date-month {
+    font-size: 0.7rem;
+    color: #666;
+  }
+
+  .slot-time {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2d3748;
+  }
+
+  .action-btn {
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: 0.2s;
+    margin: 3px;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    color: #333;
+  }
+
+  .action-btn-primary {
+    background: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: white;
+  }
+
+  .action-btn-primary:hover {
+    background: #1a194d;
+    color: white;
+  }
+
+  .action-btn-success {
+    background: var(--success-green);
+    border-color: var(--success-green);
+    color: white;
+  }
+
+  .action-btn-success:hover {
+    background: #059669;
+    color: white;
+  }
+
+  .cancel-btn {
+    color: #dc2626;
+    border-color: #fecaca;
+    background: white;
+  }
+
+  .cancel-btn:hover {
+    background: #fee2e2;
+    border-color: #dc2626;
+    color: #dc2626;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #a0aec0;
+  }
+
+  .empty-state i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+  }
+
+  .loading-spinner {
+    text-align: center;
+    padding: 50px;
+  }
+
+  .schedule-section {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #edf2f7;
+    padding: 25px;
+    margin-bottom: 30px;
+  }
+
+  .schedule-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-light);
+    text-align: center;
+  }
+
+  .schedule-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #edf2f7;
+    flex-wrap: wrap;
+  }
+
+  .schedule-day {
+    width: 120px;
+    font-weight: 600;
+    color: #4a5568;
+  }
+
+  .schedule-time {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    {% comment %} flex-wrap: wrap; {% endcomment %}
+  }
+
+  .schedule-time input {
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    width: 100px;
+  }
+
+  .schedule-available {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .schedule-available input {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .btn-save-schedule {
+    margin-top: 20px;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-save-schedule:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .modal-prescription textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    min-height: 150px;
+  }
+
+  .patient-detail-row {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #4a5568;
+  }
+
+  .patient-detail-row i {
+    width: 20px;
+    color: var(--primary-blue);
+  }
+
+  {% comment %} .patient-dashboard-link-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+    border-radius: 20px;
+    padding: 12px 20px;
+    border: 1px solid rgba(33, 32, 95, 0.15);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.03);
+    transition: all 0.25s ease;
+    cursor: pointer;
+    backdrop-filter: blur(2px);
+  }
+
+  .patient-dashboard-link-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary-blue);
+    box-shadow: 0 12px 22px rgba(33, 32, 95, 0.12);
+  }
+
+  .dashboard-link-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #1e293b;
+  }
+
+  .dashboard-link-icon {
+    background: var(--primary-blue);
+    width: 48px;
+    height: 48px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    transition: 0.2s;
+  }
+
+  .patient-dashboard-link-card:hover .dashboard-link-icon {
+    background: #0f2b4f;
+    transform: scale(1.02);
+  } {% endcomment %}
+
+  .dashboard-link-text h6 {
+    font-weight: 800;
+    margin: 0;
+    font-size: 1rem;
+    letter-spacing: -0.2px;
+    color: var(--primary-blue);
+  }
+
+  .dashboard-link-text p {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #5b6c8f;
+  }
+
+  .arrow-badge {
+    margin-left: auto;
+    background: #edf2ff;
+    border-radius: 40px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+  }
+
+  @media (max-width: 768px) {
+    .dashboard-header h1 { font-size: 1.3rem; }
+    .custom-tab { padding: 8px 15px; font-size: 0.85rem; }
+    .appointment-card { padding: 15px; }
+    .schedule-row { flex-direction: column; align-items: flex-start; }
+    .schedule-day { width: 100%; }
+    .schedule-time { width: 100%; }
+    .schedule-time input { width: calc(50% - 5px); }
+    .text-end { text-align: center !important; margin-top: 15px; }
+    .appointment-card .row, .dashboard-header .row { flex-direction: column; text-align: center; }
+    {% comment %} .patient-dashboard-link-card { margin-top: 12px; } {% endcomment %}
+    .dashboard-link-content { flex-wrap: wrap; justify-content: center; text-align: center; }
+    .arrow-badge { margin-left: 0; }
+  }
+
+ 
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center flex-wrap">
+      <div>
+        <h1><i class="fas fa-stethoscope"></i> Doctor Dashboard</h1>
+        <p>Welcome back, Dr. {{ request.user.first_name }} {{ request.user.last_name }}</p>
+      </div>
+      
+      {% comment %} <div class="patient-dashboard-link-card" id="patientDashboardLink">
+        <a href="http://127.0.0.1:8000/api/appointment/patient-dashboard/" class="dashboard-link-content" target="_blank" rel="noopener noreferrer">
+          <div class="dashboard-link-icon">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div class="dashboard-link-text">
+            <h6><i class="fas fa-calendar-check"></i> Patient Portal</h6>
+            <p>View & manage your appointments as a patient</p>
+          </div>
+          <div class="arrow-badge">
+            <i class="fas fa-arrow-right"></i> Book Now
+          </div>
+        </a>
+      </div> {% endcomment %}
+    </div>
+  </div>
+</div>
+
+<div class="container mb-5">
+  <div class="schedule-section">
+    <div class="schedule-title">
+      <i class="fas fa-calendar-alt"></i> Weekly Schedule Management
+    </div>
+    <div id="scheduleList">
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+    <button class="btn-save-schedule" id="saveScheduleBtn">
+      <i class="fas fa-save"></i> Save Schedule
+    </button>
+  </div>
+
+  <div class="custom-tabs">
+    <button class="custom-tab active" data-tab="fresh">
+      <i class="fas fa-calendar-check"></i> Upcoming Appointments
+    </button>
+    <button class="custom-tab" data-tab="cancelled">
+      <i class="fas fa-ban"></i> Cancelled Appointments
+    </button>
+  </div>
+
+  <div id="freshTab" class="tab-content active">
+    <div id="freshAppointmentsList">
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cancelledTab" class="tab-content" style="display: none">
+    <div id="cancelledAppointmentsList">
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade modal-prescription" id="prescriptionModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" style="background: var(--primary-blue); color: white">
+        <h5 class="modal-title"><i class="fas fa-prescription"></i> Add Prescription</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="prescriptionAppointmentInfo"></div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Medical History / Symptoms</label>
+          <p id="medicalHistory" class="border rounded p-2 bg-light"></p>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">Prescription Notes <span class="text-danger">*</span></label>
+          <textarea id="prescriptionNotes" class="form-control" rows="5" placeholder="Enter diagnosis, medicines, dosage, instructions..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="submitPrescriptionBtn"><i class="fas fa-save"></i> Save Prescription</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  const BASE_URL = '/api/appointment/';
+  let currentAppointmentId = null;
+
+  function loadSchedules() {
+    $.ajax({
+      url: BASE_URL + 'doctor/schedules/',
+      method: 'GET',
+      headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+      success: function(schedules) {
+        renderSchedules(schedules);
+      },
+      error: function() {
+        $('#scheduleList').html('<div class="alert alert-danger">Failed to load schedules</div>');
+      }
+    });
+  }
+
+  function renderSchedules(schedules) {
+    const daysOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const dayNames = {
+      'monday': 'Monday', 'tuesday': 'Tuesday', 'wednesday': 'Wednesday',
+      'thursday': 'Thursday', 'friday': 'Friday', 'saturday': 'Saturday', 'sunday': 'Sunday'
+    };
+
+    let html = '';
+    daysOrder.forEach(day => {
+      const schedule = schedules.find(s => s.day_of_week === day) || { day_of_week: day, start_time: '09:00 AM', end_time: '05:00 PM', is_available: true };
+      const startTime = schedule.start_time || '09:00 AM';
+      const endTime = schedule.end_time || '05:00 PM';
+      const isAvailable = schedule.is_available !== undefined ? schedule.is_available : true;
+
+      html += `
+        <div class="schedule-row" data-day="${day}">
+          <div class="schedule-day">${dayNames[day]}</div>
+          <div class="schedule-time">
+            <input type="time" class="start-time" value="${convertTo24Hour(startTime)}" step="1800">
+            <span class="mt-2">to</span>
+            <input type="time" class="end-time" value="${convertTo24Hour(endTime)}" step="1800">
+          </div>
+          <div class="schedule-available">
+            <label>
+              <input type="checkbox" class="available-check" ${isAvailable ? 'checked' : ''}>
+              Available
+            </label>
+          </div>
+        </div>
+      `;
+    });
+    $('#scheduleList').html(html);
+  }
+
+  function convertTo24Hour(time12h) {
+    if (!time12h) return '09:00';
+    if (time12h.includes(':')) {
+      if (time12h.toLowerCase().includes('pm')) {
+        let [hours, minutes] = time12h.split(':');
+        hours = parseInt(hours);
+        if (hours !== 12) hours += 12;
+        return `${hours.toString().padStart(2, '0')}:${minutes.slice(0,2)}`;
+      } else {
+        let [hours, minutes] = time12h.split(':');
+        hours = parseInt(hours);
+        if (hours === 12) hours = 0;
+        return `${hours.toString().padStart(2, '0')}:${minutes.slice(0,2)}`;
+      }
+    }
+    return time12h;
+  }
+
+  function saveSchedules(button) {
+    if (button) {
+      button.prop('disabled', true);
+      button.html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+    }
+    
+    const schedules = [];
+    $('.schedule-row').each(function() {
+      const day = $(this).data('day');
+      const startTime = $(this).find('.start-time').val();
+      const endTime = $(this).find('.end-time').val();
+      const isAvailable = $(this).find('.available-check').is(':checked');
+      schedules.push({
+        day_of_week: day,
+        start_time: startTime,
+        end_time: endTime,
+        is_available: isAvailable
+      });
+    });
+    
+    $.ajax({
+      url: BASE_URL + 'doctor/update-schedule/',
+      method: 'POST',
+      headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+      data: JSON.stringify({ schedules: schedules }),
+      contentType: 'application/json',
+      success: function(response) {
+        Swal.fire('Success', 'Schedule updated successfully. Affected appointments have been cancelled.', 'success');
+        loadAppointments();
+        if (button) {
+          button.prop('disabled', false);
+          button.html('<i class="fas fa-save"></i> Save Schedule');
+        }
+      },
+      error: function(xhr) {
+        Swal.fire('Error', xhr.responseJSON?.message || 'Failed to update schedule', 'error');
+        if (button) {
+          button.prop('disabled', false);
+          button.html('<i class="fas fa-save"></i> Save Schedule');
+        }
+      }
+    });
+  }
+
+  function loadAppointments() {
+    $.ajax({
+      url: BASE_URL + 'doctor/appointments/',
+      method: 'GET',
+      headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+      success: function(data) {
+        renderFreshAppointments(data.fresh_appointments);
+        renderCancelledAppointments(data.cancelled_appointments);
+      },
+      error: function() {
+        $('#freshAppointmentsList').html('<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load appointments.</p></div>');
+        $('#cancelledAppointmentsList').html('<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load appointments.</p></div>');
+      }
+    });
+  }
+
+  function renderFreshAppointments(appointments) {
+    if (!appointments || appointments.length === 0) {
+      $('#freshAppointmentsList').html(`
+        <div class="empty-state">
+          <i class="fas fa-calendar-day"></i>
+          <h5>No Upcoming Appointments</h5>
+          <p>You don't have any upcoming appointments.</p>
+        </div>
+      `);
+      return;
+    }
+
+    let html = '';
+    appointments.forEach(apt => {
+      const isOnline = apt.appointment_type === 'online';
+      const hasPrescription = apt.has_prescription;
+      const canCancel = apt.can_cancel;
+      
+      const patientAge = apt.age ? `${apt.age} years` : (apt.patient_age || 'Not provided');
+      const patientGender = apt.gender || apt.patient_gender || 'Not specified';
+      const patientPhone = apt.phone_number || apt.patient_phone || 'Not provided';
+
+      html += `
+        <div class="appointment-card" data-id="${apt.id}">
+          <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+              <div class="patient-avatar mx-auto">
+                ${(apt.patient_name || 'P').charAt(0).toUpperCase()}
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="patient-name">${apt.patient_name || 'Unknown'}</div>
+              <div class="patient-email"><i class="fas fa-envelope"></i> ${apt.patient_email || 'No email'}</div>
+              <div class="patient-detail-row"><i class="fas fa-phone"></i> ${patientPhone}</div>
+              <div class="patient-detail-row"><i class="fas fa-calendar-alt"></i> Age: ${patientAge} | Gender: ${patientGender}</div>
+            </div>
+            <div class="col-md-3 mt-1 d-flex flex-column align-items-center text-center">
+              <div class="appointment-date" >
+                <div class="date-day " >${apt.appointment_date.split(' ')[0]}</div>
+                <div class="date-month">${apt.appointment_date.split(' ')[1]} ${apt.appointment_date.split(' ')[2]}</div>
+              </div>
+              <div class="mt-2 slot-time">
+                <i class="far fa-clock"></i> ${apt.appointment_time} - ${apt.appointment_end_time}
+              </div>
+              <div class="mt-2">
+                <span class="appointment-badge badge-${apt.appointment_type}">
+                  <i class="fas fa-${apt.appointment_type === 'online' ? 'video' : 'hospital'}"></i>
+                  ${apt.appointment_type === 'online' ? 'Online' : 'In Hospital'}
+                </span>
+                <span class="appointment-badge badge-${apt.status} ms-2">
+                  <i class="fas fa-check-circle"></i>
+                  ${apt.status.toUpperCase()}
+                </span>
+              </div>
+            </div>
+            <div class="col-md-4 text-end">
+              <button class="action-btn view-history-btn" data-id="${apt.id}" data-history="${(apt.medical_history || '').replace(/"/g, '&quot;')}" data-name="${apt.patient_name}">
+                <i class="fas fa-notes-medical"></i> History
+              </button>
+              ${isOnline && !hasPrescription ? `
+                <button class="action-btn action-btn-primary add-prescription-btn" data-id="${apt.id}">
+                  <i class="fas fa-prescription"></i> Add Prescription
+                </button>
+              ` : ''}
+              ${isOnline && hasPrescription ? `
+                <button class="action-btn view-prescription-btn" data-id="${apt.id}">
+                  <i class="fas fa-prescription-bottle"></i> View Prescription
+                </button>
+              ` : ''}
+              ${isOnline && apt.meeting_link ? `
+                <a href="${apt.meeting_link}" target="_blank" class="action-btn action-btn-success">
+                  <i class="fas fa-video"></i> Join Call
+                </a>
+              ` : ''}
+              ${canCancel ? `
+                <button class="action-btn cancel-btn" data-id="${apt.id}" data-patient="${apt.patient_name}">
+                  <i class="fas fa-times-circle"></i> Cancel
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    $('#freshAppointmentsList').html(html);
+    attachEvents();
+  }
+
+  function renderCancelledAppointments(appointments) {
+    if (!appointments || appointments.length === 0) {
+      $('#cancelledAppointmentsList').html('<div class="empty-state"><i class="fas fa-ban"></i><h5>No Cancelled Appointments</h5></div>');
+      return;
+    }
+    let html = '';
+    appointments.forEach(apt => {
+      const patientPhone = apt.phone_number || apt.patient_phone || 'Not provided';
+      const patientAge = apt.age ? `${apt.age} years` : (apt.patient_age || 'Not provided');
+      const patientGender = apt.gender || apt.patient_gender || 'Not specified';
+      
+      html += `
+        <div class="appointment-card" style="opacity: 0.7;">
+          <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+              <div class="patient-avatar mx-auto">
+                ${(apt.patient_name || 'P').charAt(0).toUpperCase()}
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="patient-name">${apt.patient_name || 'Unknown'}</div>
+              <div class="patient-email">${apt.patient_email || 'No email'}</div>
+              <div class="patient-detail-row"><i class="fas fa-phone"></i> ${patientPhone}</div>
+              <div class="patient-detail-row"><i class="fas fa-calendar-alt"></i> Age: ${patientAge} | Gender: ${patientGender}</div>
+            </div>
+            <div class="col-md-3">
+              <div class="appointment-date">
+                <div class="date-day">${apt.appointment_date.split(' ')[0]}</div>
+                <div class="date-month">${apt.appointment_date.split(' ')[1]} ${apt.appointment_date.split(' ')[2]}</div>
+              </div>
+              <div class="mt-2 slot-time">
+                <i class="far fa-clock"></i> ${apt.appointment_time}
+              </div>
+              <span class="appointment-badge badge-cancelled mt-2 d-inline-block">
+                <i class="fas fa-ban"></i> CANCELLED
+              </span>
+            </div>
+            <div class="col-md-4 text-end">
+              <button class="action-btn view-history-btn" data-history="${(apt.medical_history || '').replace(/"/g, '&quot;')}" data-name="${apt.patient_name}">
+                <i class="fas fa-notes-medical"></i> History
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    $('#cancelledAppointmentsList').html(html);
+    attachEvents();
+  }
+
+  function attachEvents() {
+    $('.view-history-btn').off('click').on('click', function() {
+      const history = $(this).data('history') || 'No medical history provided';
+      const name = $(this).data('name') || 'Patient';
+      Swal.fire({
+        title: `Medical History - ${name}`,
+        text: history,
+        icon: 'info',
+        confirmButtonColor: '#21205f'
+      });
+    });
+
+    $('.add-prescription-btn').off('click').on('click', function() {
+      const id = $(this).data('id');
+      currentAppointmentId = id;
+      $.get(BASE_URL + `doctor/appointment/${id}/`, function(apt) {
+        const patientPhone = apt.phone_number || apt.patient_phone || 'Not provided';
+        const patientAge = apt.age ? `${apt.age} years` : (apt.patient_age || 'Not provided');
+        const patientGender = apt.gender || apt.patient_gender || 'Not specified';
+        
+        $('#prescriptionAppointmentInfo').html(`
+          <div class="alert alert-info">
+            <strong>Patient:</strong> ${apt.patient_name}<br>
+            <strong>Phone:</strong> ${patientPhone}<br>
+            <strong>Age/Gender:</strong> ${patientAge} / ${patientGender}<br>
+            <strong>Date:</strong> ${apt.appointment_date}<br>
+            <strong>Time:</strong> ${apt.appointment_time} - ${apt.appointment_end_time}<br>
+            <strong>Type:</strong> ${apt.appointment_type === 'online' ? 'Online Consultation' : 'In-Hospital Visit'}
+          </div>
+        `);
+        $('#medicalHistory').text(apt.medical_history || 'No medical history provided');
+        $('#prescriptionNotes').val('');
+        $('#prescriptionModal').modal('show');
+      });
+    });
+
+    $('.view-prescription-btn').off('click').on('click', function() {
+      const id = $(this).data('id');
+      $.get(BASE_URL + `doctor/prescription/${id}/`, function(data) {
+        Swal.fire({
+          title: 'Prescription',
+          html: `
+            <div style="text-align: left;">
+              <p><strong>Patient:</strong> ${data.patient_name || 'N/A'}</p>
+              <p><strong>Age/Gender:</strong> ${data.patient_age || 'N/A'} / ${data.patient_gender || 'N/A'}</p>
+              <p><strong>Phone:</strong> ${data.patient_phone || 'N/A'}</p>
+              <p><strong>Doctor:</strong> ${data.doctor_name}</p>
+              <p><strong>Date:</strong> ${data.appointment_date}</p>
+              <hr>
+              <p><strong>Notes:</strong></p>
+              <p style="white-space: pre-wrap;">${data.notes}</p>
+            </div>
+          `,
+          icon: 'info',
+          confirmButtonColor: '#21205f'
+        });
+      }).fail(function(xhr) {
+        Swal.fire('Info', xhr.responseJSON?.message || 'No prescription available', 'info');
+      });
+    });
+
+    $('.cancel-btn').off('click').on('click', function() {
+      const id = $(this).data('id');
+      const patientName = $(this).data('patient');
+      Swal.fire({
+        title: 'Cancel Appointment?',
+        text: `Are you sure you want to cancel appointment with ${patientName}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Yes, cancel it'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $.ajax({
+            url: BASE_URL + `doctor/cancel-appointment/${id}/`,
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            success: function(res) {
+              Swal.fire('Cancelled!', res.message, 'success');
+              loadAppointments();
+            },
+            error: function(xhr) {
+              Swal.fire('Error', xhr.responseJSON?.message || 'Failed to cancel appointment', 'error');
+            }
+          });
+        }
+      });
+    });
+  }
+
+  $('#submitPrescriptionBtn').on('click', function() {
+    const notes = $('#prescriptionNotes').val().trim();
+    if (!notes) {
+      Swal.fire('Error', 'Please enter prescription notes', 'error');
+      return;
+    }
+    $.ajax({
+      url: BASE_URL + `doctor/add-prescription/${currentAppointmentId}/`,
+      method: 'POST',
+      headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+      data: JSON.stringify({ notes: notes }),
+      contentType: 'application/json',
+      success: function(response) {
+        Swal.fire('Success', 'Prescription added successfully', 'success');
+        $('#prescriptionModal').modal('hide');
+        loadAppointments();
+      },
+      error: function(xhr) {
+        Swal.fire('Error', xhr.responseJSON?.message || 'Failed to add prescription', 'error');
+      }
+    });
+  });
+
+  $('#saveScheduleBtn').on('click', function() {
+    const $btn = $(this);
+    Swal.fire({
+      title: 'Save Schedule?',
+      text: 'Changing schedule will cancel existing appointments outside new working hours.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#21205f',
+      confirmButtonText: 'Yes, save it'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        saveSchedules($btn);
+      }
+    });
+  });
+
+  $('.custom-tab').on('click', function() {
+    const tab = $(this).data('tab');
+    $('.custom-tab').removeClass('active');
+    $(this).addClass('active');
+    if (tab === 'fresh') {
+      $('#freshTab').show();
+      $('#cancelledTab').hide();
+    } else {
+      $('#freshTab').hide();
+      $('#cancelledTab').show();
+    }
+  });
+
+  $(document).ready(function() {
+    loadSchedules();
+    loadAppointments();
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,725 @@
+{% extends 'base.html' %} {% load static %} {% block extra_css %}
+<style>
+  :root {
+      --primary-blue: rgb(33, 32, 95);
+      --primary-light: #f0f2ff;
+  }
+/* Is CSS se har jagah patient name capitalize ho jayega */
+.appointment-card small, 
+.slip-body .slip-value,
+#slipContent .row .col-6:last-child {
+    text-transform: capitalize;
+}
+  .dashboard-header {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, #3e3c91 100%);
+      padding: 15px 0;
+      margin-bottom: 30px;
+      color: white;
+  }
+
+  .dashboard-header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+  }
+
+  .custom-tabs {
+      border-bottom: 2px solid #e0e0e0;
+      margin-bottom: 25px;
+      display: flex;
+      gap: 10px;
+      {% comment %} flex-wrap: wrap; {% endcomment %}
+  }
+
+  .custom-tab {
+      background: none;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #666;
+      cursor: pointer;
+      position: relative;
+      transition: 0.3s;
+  }
+
+  .custom-tab.active {
+      color: var(--primary-blue);
+  }
+
+  .custom-tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--primary-blue);
+      border-radius: 2px;
+  }
+
+  .appointment-card {
+      background: white;
+      border-radius: 16px;
+      border: 1px solid #edf2f7;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .appointment-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  }
+
+  .doctor-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-light);
+  }
+
+  .doctor-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #2d3748;
+      margin-bottom: 5px;
+  }
+
+  .doctor-dept {
+      font-size: 0.85rem;
+      color: #718096;
+      {% comment %} margin-bottom: 10px; {% endcomment %}
+  }
+
+  .appointment-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+  }
+
+  .badge-online {
+      background: #e3f2fd;
+      color: #1976d2;
+  }
+
+  .badge-in_hospital {
+      background: #e8f5e9;
+      color: #388e3c;
+  }
+
+  .badge-confirmed {
+      background: #e8f5e9;
+      color: #388e3c;
+  }
+
+  .badge-completed {
+      background: #e3f2fd;
+      color: #1976d2;
+  }
+
+  .badge-cancelled {
+      background: #ffebee;
+      color: #d32f2f;
+  }
+
+  .appointment-date {
+      background: var(--primary-light);
+      padding: 8px 15px;
+      border-radius: 12px;
+      text-align: center;
+      display: inline-block;
+  }
+
+  .date-day {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+  }
+
+  .date-month {
+      font-size: 0.75rem;
+      color: #666;
+  }
+
+  .slot-time {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #2d3748;
+  }
+
+  .action-btn {
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: 0.2s;
+      margin: 3px;
+      cursor: pointer;
+      display: inline-block;
+      text-decoration: none;
+      color: #333;
+  }
+
+  .action-btn:hover {
+      background: var(--primary-light);
+      border-color: var(--primary-blue);
+      text-decoration: none;
+      color: #333;
+  }
+
+  .cancel-btn {
+      color: #dc2626;
+      border-color: #fecaca;
+  }
+
+  .cancel-btn:hover {
+      background: #fee2e2;
+      border-color: #dc2626;
+      color: #dc2626;
+  }
+
+  .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #a0aec0;
+  }
+
+  .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 20px;
+  }
+
+  .loading-spinner {
+      text-align: center;
+      padding: 50px;
+  }
+
+  @media print {
+      body * {
+          visibility: hidden;
+      }
+      .print-slip-container, .print-slip-container * {
+          visibility: visible;
+      }
+      .print-slip-container {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          padding: 20px;
+      }
+      .no-print {
+          display: none !important;
+      }
+      .modal-backdrop {
+          display: none;
+      }
+  }
+
+  @media (max-width: 768px) {
+      .dashboard-header {
+          padding: 20px 0;
+      }
+      .dashboard-header h1 {
+          font-size: 1.3rem;
+      }
+      .custom-tab {
+          padding: 8px 15px;
+          font-size: 0.85rem;
+      }
+      .appointment-card {
+          padding: 15px;
+      }
+      .doctor-avatar {
+          width: 50px;
+          height: 50px;
+          margin-bottom: 10px;
+      }
+      .doctor-name {
+          font-size: 1rem;
+          text-align: center;
+      }
+      .doctor-dept ,.patient-detail-row {
+          text-align: center;
+      }
+
+      .appointment-badge {
+          margin: 3px;
+      }
+      .appointment-date {
+          padding: 5px 10px;
+          margin-bottom: 10px;
+      }
+      .date-day {
+          font-size: 1rem;
+      }
+      .slot-time {
+          font-size: 0.85rem;
+          text-align: center;
+      }
+      .action-btn {
+          padding: 4px 8px;
+          font-size: 0.7rem;
+      }
+      .text-end {
+          text-align: center !important;
+          margin-top: 15px;
+      }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h1><i class="fas fa-chalkboard-user"></i> My Dashboard</h1>
+        <p>Welcome back, {{ request.user.first_name }} {{ request.user.last_name }}</p>
+      </div>
+      <a href="/api/appointment/doctors/" class="btn btn-light">
+        <i class="fas fa-calendar-plus"></i> Book New Appointment
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="container mb-5">
+  <div class="custom-tabs">
+    <button class="custom-tab active" data-tab="fresh">
+      <i class="fas fa-calendar-check"></i> Upcoming Appointments
+    </button>
+    <button class="custom-tab" data-tab="cancelled">
+      <i class="fas fa-ban"></i> Cancelled Appointments
+    </button>
+  </div>
+
+  <div id="freshTab" class="tab-content active">
+    <div id="freshAppointmentsList">
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cancelledTab" class="tab-content" style="display: none">
+    <div id="cancelledAppointmentsList">
+      <div class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Slip Modal -->
+<div class="modal fade" id="slipModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background: var(--primary-blue); color: white">
+        <h5 class="modal-title"><i class="fas fa-receipt"></i> Appointment Slip</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="slipContent"></div>
+      <div class="modal-footer no-print">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="printSlipBtn"><i class="fas fa-print"></i> Print Slip</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Prescription Modal -->
+<div class="modal fade" id="prescriptionModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" style="background: var(--primary-blue); color: white">
+        <h5 class="modal-title"><i class="fas fa-prescription"></i> Medical Prescription</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="prescriptionContent"></div>
+      <div class="modal-footer no-print">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="printPrescriptionBtn"><i class="fas fa-print"></i> Print Prescription</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="printSlipContainer" style="display: none"></div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+        const BASE_URL = '/api/appointment/';
+
+        function canCancelAppointment(appointmentDate) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const aptDate = new Date(appointmentDate);
+            aptDate.setHours(0, 0, 0, 0);
+            return aptDate >= today;
+        }
+
+        function printOnlySlip(slipHTML) {
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Appointment Slip</title>
+                    <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: Arial, sans-serif; padding: 40px 20px; background: white; }
+                        .slip-container { max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+                        .slip-header { background: transparent !important; color: #000 !important; padding: 25px; text-align: center; }
+                        .slip-header h2 { margin: 10px 0 5px; font-size: 1.5rem; color: #000 !important; }
+                        .slip-header p { opacity: 1 !important; font-size: 0.85rem; color: #000 !important; }
+                        .slip-body { padding: 25px; }
+                        .slip-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #edf2f7; }
+                        .slip-label { font-weight: 700; color: #4a5568; }
+                        .slip-value { color: #2d3748; text-align: right; }
+                        @media print { body { padding: 0; } .no-print { display: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="slip-container">${slipHTML}</div>
+                    <div style="text-align: center; margin-top: 20px;" class="no-print">
+                        <button onclick="window.print();" style="padding: 10px 20px; margin: 10px;">Print</button>
+                        <button onclick="window.close();" style="padding: 10px 20px;">Close</button>
+                    </div>
+                    <script>window.onload = function() { setTimeout(function() { window.print(); }, 500); }<\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        function loadAppointments() {
+            $.ajax({
+                url: BASE_URL + 'patient/appointments/',
+                method: 'GET',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                success: function(data) {
+                    renderFreshAppointments(data.fresh_appointments);
+                    renderCancelledAppointments(data.cancelled_appointments);
+                },
+                error: function(xhr) {
+                    console.log('Error:', xhr);
+                    $('#freshAppointmentsList').html('<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load appointments. Please refresh.</p></div>');
+                    $('#cancelledAppointmentsList').html('<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Failed to load appointments.</p></div>');
+                }
+            });
+        }
+
+        function renderFreshAppointments(appointments) {
+            if (!appointments || appointments.length === 0) {
+                $('#freshAppointmentsList').html(`
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-day"></i>
+                        <h5>No Upcoming Appointments</h5>
+                        <p>You don't have any upcoming appointments.</p>
+                    </div>
+                `);
+                return;
+            }
+
+            let html = '';
+            appointments.forEach(apt => {
+                const canCancel = canCancelAppointment(apt.appointment_date);
+                const isOnline = apt.appointment_type === 'online';
+                const patientDisplayName = apt.patient_name || '{{ request.user.first_name }} {{ request.user.last_name }}';
+
+                html += `
+                    <div class="appointment-card">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center">
+                                <img src="${apt.doctor_profile_image}" class="doctor-avatar" onerror="this.src='/static/images/doctors/default.png'">
+                            </div>
+                            <div class="col-md-3">
+                                <div class="doctor-name">${apt.doctor_name}</div>
+                                <div class="doctor-dept">${apt.doctor_department}</div>
+                                <div class="patient-detail-row"><small><i class="fas fa-user"></i> Patient: ${patientDisplayName}</small></div>
+                                <div class="patient-detail-row"><small><i class="fas fa-phone"></i> ${apt.phone_number || 'Not provided'}</small></div>
+                                <div class="patient-detail-row"><small><i class="fas fa-calendar-alt"></i> Age: ${apt.age || 'N/A'} | Gender: ${apt.gender || 'N/A'}</small></div>
+                                
+                            </div>
+                            <div class="col-md-3  mt-1 d-flex flex-column align-items-center text-center">
+                                <div class="appointment-date">
+                                    <div class="date-day">${apt.appointment_date.split(' ')[0]}</div>
+                                    <div class="date-month">${apt.appointment_date.split(' ')[1]} ${apt.appointment_date.split(' ')[2]}</div>
+                                </div>
+                                <div class="mt-2 slot-time">
+                                    <i class="far fa-clock"></i> ${apt.appointment_time} - ${apt.appointment_end_time}
+                                </div>
+
+                                <div>
+                                    <span class="appointment-badge badge-${apt.appointment_type}">
+                                        <i class="fas fa-${apt.appointment_type === 'online' ? 'video' : 'hospital'}"></i>
+                                        ${apt.appointment_type === 'online' ? 'Online' : 'In Hospital'}
+                                    </span>
+                                    <span class="appointment-badge badge-${apt.status} ms-2">
+                                        <i class="fas fa-${apt.status === 'confirmed' ? 'check-circle' : 'clock'}"></i>
+                                        ${apt.status.toUpperCase()}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="action-btn view-slip-btn" data-id="${apt.id}">
+                                    <i class="fas fa-receipt"></i> View Slip
+                                </button>
+                                ${isOnline ? `
+                                    <button class="action-btn view-prescription-btn" data-id="${apt.id}">
+                                        <i class="fas fa-prescription"></i> Prescription
+                                    </button>
+                                    ${apt.meeting_link ? `
+                                        <a href="${apt.meeting_link}" target="_blank" class="action-btn">
+                                            <i class="fas fa-video"></i> Join Call
+                                        </a>
+                                    ` : ''}
+                                ` : ''}
+                                ${canCancel && apt.status !== 'cancelled' ? `
+                                    <button class="action-btn cancel-btn" data-id="${apt.id}">
+                                        <i class="fas fa-times-circle"></i> Cancel
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            $('#freshAppointmentsList').html(html);
+            attachEvents();
+        }
+
+        function renderCancelledAppointments(appointments) {
+            if (!appointments || appointments.length === 0) {
+                $('#cancelledAppointmentsList').html('<div class="empty-state"><i class="fas fa-ban"></i><h5>No Cancelled Appointments</h5></div>');
+                return;
+            }
+
+            let html = '';
+            appointments.forEach(apt => {
+                const patientDisplayName = apt.patient_name || '{{ request.user.first_name }} {{ request.user.last_name }}';
+                html += `
+                    <div class="appointment-card" style="opacity: 0.7;">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 text-center">
+                                <img src="${apt.doctor_profile_image}" class="doctor-avatar" onerror="this.src='/static/images/doctors/default.png'">
+                            </div>
+                            <div class="col-md-3">
+                                <div class="doctor-name">${apt.doctor_name}</div>
+                                <div class="doctor-dept">${apt.doctor_department} </div>
+                                <div class="patient-detail-row"><i class="fas fa-user"></i> Patient: ${patientDisplayName}</div>
+                                <div class="mt-2" style="font-size: 0.75rem; color: #059669; background: #d1fae5; padding: 5px 8px; border-radius: 6px; margin-top: 3px;">
+                                    <i class="fas fa-credit-card"></i> Your payment will be returned to your account within 3-5 business days.
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-1 d-flex flex-column align-items-center text-center">
+                                <div class="appointment-date">
+                                    <div class="date-day">${apt.appointment_date.split(' ')[0]}</div>
+                                    <div class="date-month">${apt.appointment_date.split(' ')[1]} ${apt.appointment_date.split(' ')[2]}</div>
+                                </div>
+                                <div class="mt-2 slot-time">
+                                    <i class="far fa-clock"></i> ${apt.appointment_time}
+                                </div>
+                                <span class="appointment-badge badge-cancelled">
+                                    <i class="fas fa-ban"></i> CANCELLED
+                                </span>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <button class="action-btn view-slip-btn" data-id="${apt.id}">
+                                    <i class="fas fa-receipt"></i> View Slip
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            $('#cancelledAppointmentsList').html(html);
+            attachEvents();
+        }
+
+        function attachEvents() {
+            $('.view-slip-btn').off('click').on('click', function() {
+                const id = $(this).data('id');
+                $.get(BASE_URL + `patient/appointment-slip/${id}/`, function(apt) {
+                    const patientDisplayName = apt.patient_name || '{{ request.user.first_name }} {{ request.user.last_name }}';
+                    const slipHTML = `
+                        <div class="slip-header">
+                            <i class="fas fa-file-medical" style="font-size: 2rem;"></i>
+                            <h2>Appointment Slip</h2>
+                            <p>AI Powered E-Medcare Portal</p>
+                        </div>
+                        <div class="slip-body">
+                            <div class="slip-row"><span class="slip-label">Appointment ID:</span><span class="slip-value">#${apt.id}</span></div>
+                            <div class="slip-row"><span class="slip-label">Patient Name:</span><span class="slip-value">${patientDisplayName}</span></div>
+                            <div class="slip-row"><span class="slip-label">Phone Number:</span><span class="slip-value">${apt.phone_number || 'Not provided'}</span></div>
+                            <div class="slip-row"><span class="slip-label">Age:</span><span class="slip-value">${apt.age || 'Not provided'}</span></div>
+                            <div class="slip-row"><span class="slip-label">Gender:</span><span class="slip-value">${apt.gender || 'Not provided'}</span></div>
+                            <div class="slip-row"><span class="slip-label">Doctor:</span><span class="slip-value">${apt.doctor_name}</span></div>
+                            <div class="slip-row"><span class="slip-label">Department:</span><span class="slip-value">${apt.doctor_department}</span></div>
+                            <div class="slip-row"><span class="slip-label">Date:</span><span class="slip-value">${apt.appointment_date}</span></div>
+                            <div class="slip-row"><span class="slip-label">Time:</span><span class="slip-value">${apt.appointment_time} - ${apt.appointment_end_time}</span></div>
+                            <div class="slip-row"><span class="slip-label">Type:</span><span class="slip-value">${apt.appointment_type === 'online' ? 'Online Consultation' : 'In-Hospital Visit'}</span></div>
+                            <div class="slip-row"><span class="slip-label">Status:</span><span class="slip-value">${apt.status.toUpperCase()}</span></div>
+                            <div class="slip-row"><span class="slip-label">Medical History:</span><span class="slip-value">${apt.medical_history || 'Not provided'}</span></div>
+                        </div>
+                    `;
+                    $('#slipContent').html(`
+                        <div class="p-3">
+                            <div class="row mb-3"><div class="col-6 fw-bold">Appointment ID:</div><div class="col-6">#${apt.id}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Patient Name:</div><div class="col-6">${patientDisplayName}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Phone Number:</div><div class="col-6">${apt.phone_number || 'Not provided'}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Age:</div><div class="col-6">${apt.age || 'Not provided'}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Gender:</div><div class="col-6">${apt.gender || 'Not provided'}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Doctor:</div><div class="col-6">${apt.doctor_name}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Department:</div><div class="col-6">${apt.doctor_department}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Date:</div><div class="col-6">${apt.appointment_date}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Time:</div><div class="col-6">${apt.appointment_time} - ${apt.appointment_end_time}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Type:</div><div class="col-6">${apt.appointment_type === 'online' ? 'Online Consultation' : 'In-Hospital Visit'}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Status:</div><div class="col-6">${apt.status.toUpperCase()}</div></div>
+                            <div class="row mb-3"><div class="col-6 fw-bold">Medical History:</div><div class="col-6">${apt.medical_history || 'Not provided'}</div></div>
+                        </div>
+                    `);
+                    window.currentSlipHTML = slipHTML;
+                    $('#slipModal').modal('show');
+                });
+            });
+
+            $('.cancel-btn').off('click').on('click', function() {
+                const id = $(this).data('id');
+                Swal.fire({
+                    title: 'Cancel Appointment?',
+                    text: 'You cannot undo this action.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc2626',
+                    confirmButtonText: 'Yes, cancel it'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: BASE_URL + `patient/cancel-appointment/${id}/`,
+                            method: 'POST',
+                            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                            success: function(res) {
+                                Swal.fire('Cancelled!', res.message, 'success');
+                                loadAppointments();
+                            },
+                            error: function(xhr) {
+                                Swal.fire('Error', xhr.responseJSON?.message || 'Failed to cancel', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('.view-prescription-btn').off('click').on('click', function() {
+                const id = $(this).data('id');
+                $.get(BASE_URL + `patient/prescription/${id}/`, function(data) {
+                    const prescriptionHTML = `
+                        <div style="font-family: Arial, sans-serif;">
+                            <div style="background: linear-gradient(135deg, rgb(33, 32, 95) 0%, #3e3c91 100%); color: white; padding: 20px; text-align: center; border-radius: 12px 12px 0 0;">
+                                <h3 style="margin: 10px 0 5px;">Medical Prescription</h3>
+                                <p style="opacity: 0.9; margin: 0;">AI Powered E-Medcare Portal</p>
+                            </div>
+                            <div style="padding: 25px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #edf2f7;">
+                                    <div><strong>Patient Name:</strong><br>${data.patient_name || '{{ request.user.first_name }} {{ request.user.last_name }}'}</div>
+                                    <div><strong>Age/Gender:</strong><br>${data.patient_age || 'N/A'} / ${data.patient_gender || 'N/A'}</div>
+                                    <div><strong>Phone:</strong><br>${data.patient_phone || 'N/A'}</div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #edf2f7;">
+                                    <div><strong>Doctor:</strong><br>${data.doctor_name}</div>
+                                    <div style="text-align: right;"><strong>Date:</strong><br>${data.appointment_date}</div>
+                                </div>
+                                <div style="margin-top: 20px;">
+                                    <strong><i class="fas fa-notes-medical"></i> Doctor's Notes:</strong>
+                                    <p style="margin-top: 10px; line-height: 1.6; white-space: pre-wrap; background: #f8f9fa; padding: 15px; border-radius: 8px;">${data.notes}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    $('#prescriptionContent').html(prescriptionHTML);
+                    $('#prescriptionModal').modal('show');
+                }).fail(function(xhr) {
+                    Swal.fire('Info', xhr.responseJSON?.message || 'No prescription available', 'info');
+                });
+            });
+        }
+
+        $('#printSlipBtn').on('click', function() {
+            if (window.currentSlipHTML) {
+                printOnlySlip(window.currentSlipHTML);
+            }
+        });
+
+        $('#printPrescriptionBtn').on('click', function() {
+            const content = $('#prescriptionContent').html();
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Medical Prescription</title>
+                    <meta charset="utf-8">
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body { font-family: Arial, sans-serif; padding: 40px 20px; background: white; }
+                        .prescription-container { max-width: 700px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+                        .prescription-container .slip-header, .prescription-container div[style*="background"] { background: #f8f9fa !important; color: black !important; border-bottom: 2px solid #21205f; }
+                        .prescription-container h3, .prescription-container p, .prescription-container strong { color: black !important; }
+                        .info-row { display: flex; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #edf2f7; }
+                        .notes-section { margin-top: 5px; }
+                        .notes-content { margin-top: 10px; line-height: 1.6; white-space: pre-wrap; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+                        @media print { body { padding: 0; } .no-print { display: none; } .prescription-container { box-shadow: none; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="prescription-container">${content}</div>
+                    <div style="text-align: center; margin-top: 20px;" class="no-print">
+                        <button onclick="window.print();" style="padding: 10px 20px; margin: 10px; background: #21205f; color: white; border: none; border-radius: 5px; cursor: pointer;">Print</button>
+                        <button onclick="window.close();" style="padding: 10px 20px; margin: 10px; background: #64748b; color: white; border: none; border-radius: 5px; cursor: pointer;">Close</button>
+                    </div>
+                    <script>window.onload = function() { setTimeout(function() { window.print(); }, 500); }<\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        });
+
+        $('.custom-tab').on('click', function() {
+            const tab = $(this).data('tab');
+            $('.custom-tab').removeClass('active');
+            $(this).addClass('active');
+            if (tab === 'fresh') {
+                $('#freshTab').show();
+                $('#cancelledTab').hide();
+            } else {
+                $('#freshTab').hide();
+                $('#cancelledTab').show();
+            }
+        });
+
+        $(document).ready(function() {
+            loadAppointments();
+        });
+</script>
+{% endblock %}
