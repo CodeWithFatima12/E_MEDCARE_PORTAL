@@ -31,7 +31,7 @@ def signup_view(request):
             # (optional success message - if you want later)
             # messages.success(request, "Account created successfully")
 
-            return redirect('dashboard')
+            return redirect('signin')
 
         else:
             #  Send all form errors to popup

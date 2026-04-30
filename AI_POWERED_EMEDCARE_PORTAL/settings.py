@@ -13,13 +13,18 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # define API key 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # settings.py
-GEMINI_API_KEY = "AIzaSyBlNQY144wTACrVcg3j8UizeUNVjk23mKE"
+import os
+
+# Best practice: use an environment variable
+
+GEMINI_API_KEY = config('GEMINI_API_KEY')
+
 
 # Path to the folder containing AI models
 SAVED_MODELS_DIR = os.path.join(BASE_DIR, 'saved_models')

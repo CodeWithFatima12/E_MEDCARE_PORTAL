@@ -1,169 +1,207 @@
+/* --- E-Medcare UI Framework --- */
+:root {
+    --emed-primary: #21205F;
+    --emed-primary-dark: #1a194d;
+    --emed-bg: #f4f7f9;
+    --emed-light: #f8f9fa;
+    --emed-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
 
-        /* E-MedCare Branding: #21205F */
-        :root {
-            --emed-primary: #21205F;
-            --emed-bg: #f4f7f9;
-        }
+body {
+    background-color: var(--emed-bg);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
 
-        body {
-            background-color: var(--emed-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-        }
+/* Main Layout Card */
+.main-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--emed-shadow);
+    overflow: hidden;
+    background: white;
+    margin-top: 40px;
+}
 
-        .main-card {
-            border: none;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            margin-top: 40px;
-        }
+/* Header & Branding */
+.header-banner {
+    background-color: var(--emed-primary);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
 
-        /* Top Header Banner */
-        .header-banner {
-            background-color: var(--emed-primary);
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
+.header-banner h1 {
+    font-weight: 500;
+    letter-spacing: -1px;
+    margin-bottom: 5px;
+    font-size: 1.5rem !important;
+}
 
-        .header-banner h1 {
-            font-weight: 500;
-            letter-spacing: -1px;
-            margin-bottom: 5px;
-            font-size: 1.5rem !important;
-        }
+/* Form Elements */
+.form-label {
+    font-weight: 600;
+    color: var(--emed-primary);
+    margin-bottom: 8px;
+}
 
-        /* Form Styling */
-        .form-label {
-            font-weight: 600;
-            color: var(--emed-primary);
-        }
+.form-control, .form-select {
+    border: 1px solid #ced4da;
+    padding: 10px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
 
-        .form-control, .form-select {
-            border: 1px solid #ced4da;
-            padding: 10px;
-            border-radius: 6px;
-        }
+.form-control:focus, .form-select:focus {
+    border-color: var(--emed-primary);
+    box-shadow: 0 0 0 0.25rem rgba(33, 32, 95, 0.1);
+    outline: none;
+}
 
-        .form-control:focus {
-            border-color: var(--emed-primary);
-            box-shadow: 0 0 0 0.25rem rgba(33, 32, 95, 0.1);
-        }
+/* Meal Selection Container (Dynamic Checkboxes) */
+.meal-selection-container {
+    background-color: var(--emed-light);
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    height: 100%;
+}
 
-        .btn-generate {
-            background-color: var(--emed-primary);
-            border: none;
-            padding: 14px;
-            font-weight:400;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
+.form-check-input:checked {
+    background-color: var(--emed-primary);
+    border-color: var(--emed-primary);
+}
 
-        .btn-generate:hover {
-            background-color: #1a194d;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(33, 32, 95, 0.2);
-        }
+/* Action Button */
+.btn-generate {
+    background-color: var(--emed-primary) !important;
+    border: none !important;
+    padding: 14px !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+    transition: 0.3s;
+    color: white !important;
+}
 
-        /* Results & Accordion */
-        .health-badge {
-            background-color: #fff;
-            border-left: 5px solid var(--emed-primary);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
+.btn-generate:hover {
+    background-color: var(--emed-primary-dark) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(33, 32, 95, 0.2);
+}
 
-        .accordion-item {
-            border: none;
-            margin-bottom: 10px;
-            border-radius: 8px !important;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-        }
+/* Results Display & Accordion */
+.health-badge {
+    background-color: #fff;
+    border-left: 5px solid var(--emed-primary);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
 
-        .accordion-button {
-            font-weight: 600;
-            border-radius: 8px !important;
-        }
+.accordion-item {
+    border: none;
+    margin-bottom: 10px;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    overflow: hidden;
+}
 
-        .accordion-button:not(.collapsed) {
-            background-color: rgba(33, 32, 95, 0.05);
-            color: var(--emed-primary);
-        }
+.accordion-button {
+    font-weight: 600;
+    color: #444;
+}
 
-        .meal-box {
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            border-top: 3px solid var(--emed-primary);
-            height: 100%;
-        }
+.accordion-button:not(.collapsed) {
+    background-color: rgba(33, 32, 95, 0.05);
+    color: var(--emed-primary);
+}
 
-        .meal-title {
-            color: var(--emed-primary);
-            font-weight: bold;
-            font-size: 0.95rem;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
+/* Meal Content Boxes */
+.meal-box {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    border-top: 3px solid var(--emed-primary);
+    height: 100%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
 
-        /* PRINT LOGIC: THE "CLEAN PDF" ENGINE */
-        @media print {
-            /* 1. Hide everything except the days and meals */
-            .header-banner, form, hr, .btn, .health-badge, .mt-4.text-center, .accordion-header button::after {
-                display: none !important;
-            }
+.meal-title {
+    color: var(--emed-primary);
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
-            body { background: white !important; }
-            .container { max-width: 100% !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            .main-card { box-shadow: none !important; margin-top: 0 !important; }
+/* --- PDF & PRINT ENGINE --- */
+@media print {
+    @page { margin: 10mm; }
 
-            /* 2. Force Accordion to remain open for the PDF */
-            .accordion-collapse {
-                display: block !important;
-                height: auto !important;
-                visibility: visible !important;
-            }
+    /* Hide non-essential elements */
+    footer, nav, .btn, .header-banner, form, hr, .mt-4.text-center, .accordion-header button::after {
+        display: none !important;
+    }
 
-            /* 3. Style text for clarity on paper */
-            .text-muted {
-                color: #000 !important;
-                opacity: 1 !important;
-                font-size: 11pt !important;
-            }
+    body { 
+        background: white !important; 
+        padding: 0 !important;
+    }
 
-            /* 4. PDF Header */
-            body::before {
-                content: "Personalized Diet Schedule";
-                display: block;
-                text-align: center;
-                font-size: 20pt;
-                font-weight: bold;
-                color: #21205F;
-                margin-bottom: 40px;
-                border-bottom: 2px solid #21205F;
-                padding-bottom: 10px;
-            }
+    .container { 
+        max-width: 100% !important; 
+        width: 100% !important; 
+        margin: 0 !important; 
+        padding: 0 !important; 
+    }
 
-            /* 5. Force 3-Column Layout on PDF */
-            .row {
-                display: flex !important;
-                flex-wrap: nowrap !important;
-            }
-            .col-md-4 {
-                width: 33.33% !important;
-                flex: 0 0 33.33% !important;
-                border: none !important;
-            }
-            .meal-box {
-                border: 1px solid #eee !important;
-                border-top: 3px solid #21205F !important;
-            }
-            
-            .accordion-item {
-                page-break-inside: avoid; /* Keeps a single day on one page */
-                margin-bottom: 30px !important;
-            }
-        }
-        
+    .main-card { 
+        box-shadow: none !important; 
+        margin-top: 0 !important; 
+    }
+
+    /* Force all accordion days to be visible */
+    .accordion-collapse {
+        display: block !important;
+        height: auto !important;
+        visibility: visible !important;
+    }
+
+    /* Professional PDF Header */
+    body::before {
+        content: "E-Medcare Personalized Diet Schedule";
+        display: block;
+        text-align: center;
+        font-size: 22pt;
+        font-weight: bold;
+        color: #21205F;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #21205F;
+        padding-bottom: 10px;
+    }
+
+    /* Grid layout for meals in PDF */
+    .row {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+    }
+
+    .col-md-4, .col-lg-4 {
+        width: 33.33% !important;
+        flex: 0 0 33.33% !important;
+    }
+
+    .meal-box {
+        border: 1px solid #ddd !important;
+        border-top: 4px solid #21205F !important;
+        page-break-inside: avoid;
+    }
+
+    .accordion-item {
+        page-break-inside: avoid;
+        margin-bottom: 25px !important;
+        border: 1px solid #eee !important;
+    }
+}

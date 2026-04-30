@@ -5,40 +5,100 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/ai_module/DietForm.css' %}">
+<style>
+    /* --- Dynamic Layout Logic --- */
+    .diet-plan-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        /* Default 3 columns */
+        gap: 15px;
+    }
+
+    /* Logic for 5 items: The last 2 will center or span properly */
+    .diet-plan-grid>div:nth-child(4),
+    .diet-plan-grid>div:nth-child(5) {
+        grid-row: 2;
+    }
+
+    /* --- Print Functionality Logic --- */
+    @media print {
+
+        /* Hide everything except the main-card content */
+        nav,
+        .navbar,
+        .header-banner,
+        .btn,
+        .d-print-none,
+        footer,
+        hr {
+            display: none !important;
+        }
+
+        body {
+            background: white !important;
+        }
+
+        .container {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .main-card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Ensure all accordion sections are expanded for printing */
+        .accordion-collapse {
+            display: block !important;
+            height: auto !important;
+            visibility: visible !important;
+        }
+
+        .accordion-button::after {
+            display: none !important;
+        }
+
+        /* Print Layout: 3 columns */
+        .diet-plan-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+        }
+
+        .meal-box {
+            border: 1px solid #ddd !important;
+            page-break-inside: avoid;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"> -->
-
-
-<div class="container mb-5">
+<div class="container mb-5 mt-4">
     <div class="main-card card bg-white">
-        <div class="header-banner">
+        <div class="header-banner d-print-none">
             <h1>Your Customized Diet Plan</h1>
-            <!-- <p class="mb-0 opacity-75">Advanced AI Dietary Analysis</p> -->
         </div>
 
         <div class="card-body p-4 p-md-5">
-
-
-            {% if status_message or diet_plan %}
-            <hr class="my-5">
-
             {% if status_message %}
-            <div class="health-badge shadow-sm">
+            <div class="health-badge shadow-sm mb-4">
                 <h5 class="fw-bold text-primary mb-2">Clinical Health Evaluation</h5>
                 <p class="mb-0 text-dark">{{ status_message }}</p>
             </div>
             {% endif %}
 
             {% if diet_plan %}
-            {% if diet_plan.Error %}
-            <div class="alert alert-danger">{{ diet_plan.Error }}</div>
+            {% if diet_plan.error %}
+            <div class="alert alert-danger">{{ diet_plan.error }}</div>
             {% else %}
-            <h3 class="mb-4 fw-bold">Daily Diet Schedule</h3>
+            <h3 class="mb-4 fw-bold d-print-none">Daily Diet Schedule</h3>
+
             <div class="accordion" id="dietPlanAccordion">
                 {% for day, meals in diet_plan.items %}
-                <div class="accordion-item shadow-sm">
+                <div class="accordion-item shadow-sm mb-3">
                     <h2 class="accordion-header">
                         <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button"
                             data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}">
@@ -48,25 +108,16 @@
                     <div id="collapse{{ forloop.counter }}"
                         class="accordion-collapse collapse {% if forloop.first %}show{% endif %}">
                         <div class="accordion-body bg-light">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <div class="meal-box shadow-sm">
-                                        <div class="meal-title">Breakfast</div>
-                                        <div class="text-muted small">{{ meals.Breakfast }}</div>
+                            <div class="diet-plan-grid">
+                                {# DYNAMIC LOOP: This only shows meals that actually exist in the response #}
+                                {% for meal_name, meal_content in meals.items %}
+                                <div class="meal-box-container">
+                                    <div class="meal-box shadow-sm h-100">
+                                        <div class="meal-title">{{ meal_name|cut:"_" }}</div>
+                                        <div class="text-muted small">{{ meal_content }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="meal-box shadow-sm">
-                                        <div class="meal-title">Lunch</div>
-                                        <div class="text-muted small">{{ meals.Lunch }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="meal-box shadow-sm">
-                                        <div class="meal-title">Dinner</div>
-                                        <div class="text-muted small">{{ meals.Dinner }}</div>
-                                    </div>
-                                </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
@@ -74,16 +125,14 @@
                 {% endfor %}
             </div>
 
-            <div class="mt-5 text-center">
-                <button class="btn btn-outline-dark btn-lg px-5 shadow-sm" onclick="window.print()">
-                    📄 Export Meals to PDF
+            <div class="mt-5 text-center d-print-none">
+                <button class="btn btn-secondary btn-lg px-5 shadow-sm" onclick="window.print()">
+                    📄 Print Full Diet Plan
                 </button>
             </div>
-            {% endif %}
             {% endif %}
             {% endif %}
         </div>
     </div>
 </div>
-
 {% endblock %}
