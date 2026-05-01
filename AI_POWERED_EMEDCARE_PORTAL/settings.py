@@ -16,18 +16,14 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-# define API key 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-# settings.py
-GEMINI_API_KEY = "AIzaSyBlNQY144wTACrVcg3j8UizeUNVjk23mKE"
-# Path to the folder containing AI models
-SAVED_MODELS_DIR = os.path.join(BASE_DIR, 'saved_models')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-qijf7r(r7dtmj2-f4t)yra6st9kzo@uxh*2&r*g93yio8+i(o-'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
