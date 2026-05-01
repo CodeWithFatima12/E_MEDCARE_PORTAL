@@ -5,12 +5,11 @@ import json
 def generate_diet_plan(data_dict):
     """
     Accepts the dictionary from form.get_data_for_gemini()
-    Uses the new google-genai SDK.
+    ses the new google-genai SDK.
     """
+   
     # --- Step 0: Initialize Client ---
     # It is safer to use settings.GEMINI_API_KEY if you have it defined there
-   # api_key = getattr(settings, "GEMINI_API_KEY", "IzaSyBlNQY144wTACrVcg3j8UizeUNVjk23mKE")
-
     api_key = getattr(settings, "GEMINI_API_KEY", None)
     client = genai.Client(api_key=api_key)
 
@@ -21,8 +20,10 @@ def generate_diet_plan(data_dict):
     gender = data_dict.get('gender')         
     goal = data_dict.get('goal')             # 'lose' or 'gain'
     duration = data_dict.get('duration')
-    region = data_dict.get('region')
-    country = data_dict.get('country')
+    # region = data_dict.get('region')
+    country = data_dict.get('country') 
+    selected_meals = data_dict.get('meals', [])
+    # selected_meals = data_dict.get('meals', ['breakfast', 'lunch', 'dinner'])
     dislikes_list = data_dict.get('dislikes', [])
 
     # --- Step 1: Conversion & BMI Calculation ---
@@ -81,32 +82,39 @@ def generate_diet_plan(data_dict):
             status_message = f"Your BMI is {bmi} (Underweight). We have generated a weight gain plan to help you improve your health."
             actual_goal = "gain"
 
-    # --- Step 4: Construct the Prompt ---
+# --- Step 4: Construct the Prompt ---
+    meal_names = [m.replace('_', ' ').title() for m in selected_meals]
+    meals_string = ", ".join(meal_names)
+
+# To this (Use underscores instead of spaces):
+    dynamic_sample = {name.replace(' ', '_'): "Food name and quantity in grams" for name in meal_names}
     dislike_text = ", ".join(dislikes_list) if dislikes_list else "none"
-    location = f"{country} in the {region} region" if country else region
 
     prompt = f"""
-    You are a professional nutritionist in {location}. 
+    You are a professional nutritionist in {country}. 
     User Profile: Age {age}, Height {height_inches} inches ({round(height_cm, 1)}cm), Weight {weight}kg, BMI {bmi}.
     Goal: {actual_goal.upper()} weight.
     
-    Task: Create a detailed {duration}-day diet plan for a {gender} user..
+    Task: Create a detailed {duration}-day diet plan for a {gender} user.
     
-    Requirements:
-    1. Calculate the daily calorie needs for a {gender} of this age and size.
-    2. If female, ensure adequate Iron and Calcium sources.
-    3. If male, ensure protein portions are optimized for muscle maintenance.
-    4. Use ingredients common in {location}.
-    5. Strictly EXCLUDE these foods: {dislike_text}.
-    6. Specify exact quantities in GRAMS for every food item (e.g., "150g Grilled Chicken", "200g Brown Rice").
-    7. Provide Breakfast, Lunch, and Dinner for each day up to Day {duration}.
+    CRITICAL INSTRUCTIONS:
+    1. STRICT MEAL SELECTION: You MUST ONLY generate keys for these meals: {meals_string}. 
+    2. ABSOLUTE FORBIDDEN: Do NOT include any meal type (like Breakfast, Lunch, or Dinner) if it is not in this specific list: {meals_string}.
+    3. Use ingredients common in {country} and strictly EXCLUDE: {dislike_text}.
+    4. Calculate daily calorie needs for a {gender} and specify quantities in GRAMS.
+    5. Provide the plan for exactly {duration} days.
+    6. If female, ensure adequate Iron and Calcium sources.
+    7. If male, ensure protein portions are optimized for muscle maintenance.
+    8.Strictly EXCLUDE these foods: {dislike_text}.
+    9.Specify exact quantities in GRAMS for every food item (e.g., "150g Grilled Chicken", "200g Brown Rice").
     
-    Format the output as a JSON object ONLY. 
+    Output Format:
+    Return ONLY a JSON object with this exact structure:
     {{
       "status_info": "{status_message}",
       "plan": {{
-        "Day 1": {{"Breakfast": "...", "Lunch": "...", "Dinner": "..."}},
-        ... up to Day {duration}
+        "Day 1": {json.dumps(dynamic_sample)},
+        "Day 2": {json.dumps(dynamic_sample)}
       }}
     }}
     """
@@ -116,6 +124,10 @@ def generate_diet_plan(data_dict):
         # UPDATED: New syntax for content generation
         response = client.models.generate_content(
             model='gemini-2.5-flash-lite', 
+<<<<<<< HEAD
+=======
+            # model='gemini-2.5-flash', 
+>>>>>>> 753494074b90b5844b76cd1c3ad31159a0d84bf0
             contents=prompt,
             config={
                 'response_mime_type': 'application/json',

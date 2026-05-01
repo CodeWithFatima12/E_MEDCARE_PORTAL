@@ -56,22 +56,6 @@ class FoodCategoryForm(forms.Form):
         widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "e.g., 7"})
     )
 
-    # --- Existing: Region Selection ---
-    REGION_CHOICES = [
-        ('global', 'Global/General'),
-        ('south_asia', 'South Asian (Indian, Pakistani, etc.)'),
-        ('middle_east', 'Middle Eastern'),
-        ('mediterranean', 'Mediterranean'),
-        ('east_asia', 'East Asian'),
-        ('western', 'Western/American'),
-    ]
-    
-    region = forms.ChoiceField(
-        choices=REGION_CHOICES,
-        label="Your Region (for local food options)",
-        required=True,
-        widget=forms.Select(attrs={"class": "form-select"})
-    )
     
     country = forms.CharField(
         label="Specific Country", 
@@ -90,13 +74,29 @@ class FoodCategoryForm(forms.Form):
     flour_items = forms.CharField(label="Disliked Flour/Bread", required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
     sweets = forms.CharField(label="Disliked Sweets", required=False, widget=forms.TextInput(attrs={"class": "form-control"}))
 
+    MEAL_CHOICES = [
+    ('breakfast', 'Breakfast'),
+    ('morning_snack', 'Morning Snack'),
+    ('lunch', 'Lunch'),
+    ('evening_snack', 'Evening Snack'),
+    ('dinner', 'Dinner'),
+    ]
+
+    meals = forms.MultipleChoiceField(
+    choices=MEAL_CHOICES,
+    label="Include Meals:",
+    widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+    initial=['breakfast', 'lunch', 'dinner'],
+    required=True
+    )
+
     def get_data_for_gemini(self):
         """
         Returns a dictionary containing the metrics, region, and the list of dislikes.
         """
         dislikes = []
         # Fields that should NOT be added to the 'dislikes' list
-        non_dislike_fields = ['age', 'height', 'weight','gender', 'goal', 'duration', 'region', 'country']
+        non_dislike_fields = ['age', 'height', 'weight','gender', 'goal', 'duration', 'region', 'country','meals']
         
         for field_name, value in self.cleaned_data.items():
             if field_name not in non_dislike_fields and value:
@@ -110,7 +110,8 @@ class FoodCategoryForm(forms.Form):
             "gender": self.cleaned_data.get('gender'),
             "goal": self.cleaned_data.get('goal'),
             "duration": self.cleaned_data.get('duration'),
-            "region": self.cleaned_data.get('region'),
+            # "region": self.cleaned_data.get('region'),
             "country": self.cleaned_data.get('country'),
+            "meals": self.cleaned_data.get('meals'),
             "dislikes": dislikes
         }
