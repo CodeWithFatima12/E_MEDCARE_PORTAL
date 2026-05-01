@@ -6,7 +6,6 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout
 from .forms import SignupForm
 
-
 # ================= LOGIN =================
 class SignInView(LoginView):
     template_name = 'accounts/signin.html'

@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.db import models
+from django.core.mail import send_mail
+from django.conf import settings
 
 from .models import Doctor, Department, DoctorSchedule, TimeSlot, Appointment, Prescription
 from .serializers import (
@@ -231,30 +233,91 @@ def get_patient_appointments_api(request):
         'cancelled_appointments': PatientAppointmentSerializer(cancelled_appointments, many=True).data
     })
 
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def cancel_appointment_api(request, appointment_id):
+#     user = request.user
+#     today = date.today()
+    
+#     try:
+#         appointment = Appointment.objects.get(id=appointment_id, patient=user)
+        
+#         if appointment.status == 'cancelled':
+#             return Response({'status': 'error', 'message': 'Already cancelled.'}, status=400)
+        
+#         if appointment.slot.date < today:
+#             return Response({'status': 'error', 'message': 'Cannot cancel past appointments.'}, status=400)
+        
+#         appointment.slot.is_booked = False
+#         appointment.slot.save()
+#         appointment.status = 'cancelled'
+#         appointment.save()
+        
+#         return Response({'status': 'success', 'message': 'Appointment cancelled successfully.'})
+        
+#     except Appointment.DoesNotExist:
+#         return Response({'status': 'error', 'message': 'Appointment not found.'}, status=404)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def cancel_appointment_api(request, appointment_id):
     user = request.user
-    today = date.today()
     
     try:
+        # Fetch the appointment and ensure it belongs to the logged-in user
         appointment = Appointment.objects.get(id=appointment_id, patient=user)
         
+        # 1. Check if already cancelled
         if appointment.status == 'cancelled':
-            return Response({'status': 'error', 'message': 'Already cancelled.'}, status=400)
+            return Response({
+                'status': 'error', 
+                'message': 'This appointment has already been cancelled.'
+            }, status=400)
+
+        # 2. Combine date and time for comparison
+        # Ensure your models use date and time objects correctly
+        apt_datetime = datetime.combine(appointment.slot.date, appointment.slot.start_time)
+        now = datetime.now()
         
-        if appointment.slot.date < today:
-            return Response({'status': 'error', 'message': 'Cannot cancel past appointments.'}, status=400)
+        # 3. Prevent cancelling past appointments
+        if apt_datetime < now:
+            return Response({
+                'status': 'error', 
+                'message': 'Cannot cancel past appointments.'
+            }, status=400)
+
+        # 4. The 2-Hour Restriction Logic
+        time_diff = apt_datetime - now
+        if time_diff < timedelta(hours=2):
+            return Response({
+                'status': 'error', 
+                'message': 'Cancellation is only allowed up to 2 hours before the appointment start time.'
+            }, status=400)
         
+        # 5. Execute Cancellation
+        # Free up the time slot so others can book it
         appointment.slot.is_booked = False
         appointment.slot.save()
+        
+        # Update appointment status
         appointment.status = 'cancelled'
         appointment.save()
         
-        return Response({'status': 'success', 'message': 'Appointment cancelled successfully.'})
+        return Response({
+            'status': 'success', 
+            'message': 'Your appointment has been cancelled successfully.'
+        })
         
     except Appointment.DoesNotExist:
-        return Response({'status': 'error', 'message': 'Appointment not found.'}, status=404)
+        return Response({
+            'status': 'error', 
+            'message': 'Appointment record not found.'
+        }, status=404)
+    except Exception as e:
+        return Response({
+            'status': 'error', 
+            'message': f'An unexpected error occurred: {str(e)}'
+        }, status=500)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -431,8 +494,43 @@ def update_doctor_schedule_api(request):
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=500)
 
+# def cancel_affected_appointments(doctor, day_of_week, old_start, old_end, new_start, new_end, is_available):
+#     """Cancel appointments that are no longer within working hours"""
+#     days_map = {'monday': 0, 'tuesday': 1, 'wednesday': 2, 'thursday': 3, 'friday': 4, 'saturday': 5, 'sunday': 6}
+#     target_weekday = days_map.get(day_of_week.lower())
+    
+#     if target_weekday is None:
+#         return
+    
+#     today = date.today()
+#     current_date = today
+#     while current_date.weekday() != target_weekday:
+#         current_date += timedelta(days=1)
+    
+#     for i in range(90):
+#         appointment_date = current_date + timedelta(days=i*7)
+        
+#         if not is_available:
+#             appointments = Appointment.objects.filter(
+#                 doctor=doctor, slot__date=appointment_date, status='confirmed'
+#             )
+#         else:
+#             appointments = Appointment.objects.filter(
+#                 doctor=doctor, slot__date=appointment_date, slot__start_time__lt=new_start, status='confirmed'
+#             ) | Appointment.objects.filter(
+#                 doctor=doctor, slot__date=appointment_date, slot__end_time__gt=new_end, status='confirmed'
+#             )
+        
+#         for appointment in appointments:
+#             slot = appointment.slot
+#             slot.is_booked = False
+#             slot.save()
+#             appointment.status = 'cancelled'
+#             appointment.save()
+
+
 def cancel_affected_appointments(doctor, day_of_week, old_start, old_end, new_start, new_end, is_available):
-    """Cancel appointments that are no longer within working hours"""
+    """Cancel appointments that are no longer within working hours and notify patients"""
     days_map = {'monday': 0, 'tuesday': 1, 'wednesday': 2, 'thursday': 3, 'friday': 4, 'saturday': 5, 'sunday': 6}
     target_weekday = days_map.get(day_of_week.lower())
     
@@ -459,12 +557,42 @@ def cancel_affected_appointments(doctor, day_of_week, old_start, old_end, new_st
             )
         
         for appointment in appointments:
+            # 1. Store patient info before changing status
+            patient_email = appointment.patient.email
+            patient_name = appointment.patient.first_name
+            doc_name = f"Dr. {doctor.user.last_name}"
+            apt_date = appointment.slot.date.strftime('%d-%b-%Y')
+            apt_time = appointment.slot.start_time.strftime('%I:%M %p')
+
+            # 2. Perform database updates
             slot = appointment.slot
             slot.is_booked = False
             slot.save()
             appointment.status = 'cancelled'
             appointment.save()
 
+            # 3. Send Email Notification
+            subject = "Appointment Cancellation - Schedule Change"
+            message = (
+                f"Dear {patient_name},\n\n"
+                f"We regret to inform you that your appointment with {doc_name} "
+                f"on {apt_date} at {apt_time} has been cancelled because the doctor's "
+                f"working hours have changed.\n\n"
+                f"Please log in to the E-Medcare portal to book a new available slot.\n\n"
+                f"Best regards,\nCareSync Team"
+            )
+
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    settings.EMAIL_HOST_USER,
+                    [patient_email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                # If email is fake or fails, we log it to console but keep going
+                print(f"!!! Notification failed for {patient_email}: {e} !!!")
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_doctor_appointment_detail_api(request, appointment_id):
@@ -504,43 +632,145 @@ def get_doctor_prescription_api(request, appointment_id):
 
 # ==================== DOCTOR CANCEL APPOINTMENT API ====================
 
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def doctor_cancel_appointment_api(request, appointment_id):
+#     """Doctor cancels an appointment"""
+#     try:
+#         doctor = Doctor.objects.get(user=request.user)
+#         appointment = Appointment.objects.get(id=appointment_id, doctor=doctor)
+        
+#         if appointment.status == 'cancelled':
+#             return Response({
+#                 'status': 'error',
+#                 'message': 'This appointment is already cancelled.'
+#             }, status=400)
+        
+#         if appointment.status != 'confirmed':
+#             return Response({
+#                 'status': 'error',
+#                 'message': f'Cannot cancel appointment with status: {appointment.status}'
+#             }, status=400)
+        
+#         slot = appointment.slot
+#         slot.is_booked = False
+#         slot.save()
+        
+#         appointment.status = 'cancelled'
+#         appointment.save()
+        
+#         return Response({
+#             'status': 'success',
+#             'message': f'Appointment with {appointment.patient.first_name} {appointment.patient.last_name} has been cancelled successfully.'
+#         })
+        
+#     except Doctor.DoesNotExist:
+#         return Response({'status': 'error', 'message': 'Doctor not found.'}, status=404)
+#     except Appointment.DoesNotExist:
+#         return Response({'status': 'error', 'message': 'Appointment not found.'}, status=404)
+#     except Exception as e:
+#         return Response({'status': 'error', 'message': str(e)}, status=500)
+
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def doctor_cancel_appointment_api(request, appointment_id):
+#     """Doctor cancels an appointment"""
+#     try:
+#         # 1. Verify the user is a registered doctor
+#         doctor = Doctor.objects.get(user=request.user)
+#         appointment = Appointment.objects.get(id=appointment_id, doctor=doctor)
+        
+#         # 2. Check if already cancelled
+#         if appointment.status == 'cancelled':
+#             return Response({
+#                 'status': 'error',
+#                 'message': 'This appointment is already cancelled.'
+#             }, status=400)
+        
+#         # 3. Check if appointment is already completed
+#         if appointment.status == 'completed':
+#             return Response({
+#                 'status': 'error',
+#                 'message': 'Cannot cancel an appointment that has already been completed.'
+#             }, status=400)
+
+#         # 4. Past Date Check
+#         # Doctors should not be able to cancel appointments from previous days
+#         if appointment.slot.date < date.today():
+#             return Response({
+#                 'status': 'error',
+#                 'message': 'Cannot cancel past appointments.'
+#             }, status=400)
+        
+#         # 5. Execute Cancellation 
+#         # (No 2-hour restriction for doctors, they have full control)
+#         slot = appointment.slot
+#         slot.is_booked = False
+#         slot.save()
+        
+#         appointment.status = 'cancelled'
+#         appointment.save()
+        
+#         # Pro-Tip: You could trigger an Email/SMS notification here to inform the patient
+        
+#         return Response({
+#             'status': 'success',
+#             'message': f'Appointment with {appointment.patient.first_name} has been cancelled.'
+#         })
+        
+#     except Doctor.DoesNotExist:
+#         return Response({'status': 'error', 'message': 'Doctor profile not found.'}, status=404)
+#     except Appointment.DoesNotExist:
+#         return Response({'status': 'error', 'message': 'Appointment record not found.'}, status=404)
+
+
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def doctor_cancel_appointment_api(request, appointment_id):
-    """Doctor cancels an appointment"""
     try:
+        # 1. Doctor aur Appointment identify karein
         doctor = Doctor.objects.get(user=request.user)
         appointment = Appointment.objects.get(id=appointment_id, doctor=doctor)
         
         if appointment.status == 'cancelled':
-            return Response({
-                'status': 'error',
-                'message': 'This appointment is already cancelled.'
-            }, status=400)
+            return Response({'status': 'error', 'message': 'Already cancelled.'}, status=400)
         
-        if appointment.status != 'confirmed':
-            return Response({
-                'status': 'error',
-                'message': f'Cannot cancel appointment with status: {appointment.status}'
-            }, status=400)
-        
-        slot = appointment.slot
-        slot.is_booked = False
-        slot.save()
-        
+        # Patient details for email
+        patient_email = appointment.patient.email
+        patient_name = f"{appointment.patient.first_name}"
+        doc_name = f"Dr. {doctor.user.last_name}"
+
+        # 2. Status Update (Database kaam pehle)
+        appointment.slot.is_booked = False
+        appointment.slot.save()
         appointment.status = 'cancelled'
         appointment.save()
+
+        # 3. Email Logic with Error Handling
+        subject = "Appointment Cancellation Notice"
+        message = f"Hi {patient_name}, your appointment with {doc_name} has been cancelled."
         
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.EMAIL_HOST_USER,
+                [patient_email],
+                fail_silently=False, # Taake error console mein dikhayi de
+            )
+            email_log = "Email sent successfully."
+        except Exception as e:
+            # Agar email fake hai toh yahan error print hoga
+            print(f"--- EMAIL ERROR: {e} ---")
+            email_log = "Email failed, but appointment cancelled in system."
+
         return Response({
-            'status': 'success',
-            'message': f'Appointment with {appointment.patient.first_name} {appointment.patient.last_name} has been cancelled successfully.'
+            'status': 'success', 
+            'message': f'Appointment cancelled. Status: {email_log}'
         })
-        
-    except Doctor.DoesNotExist:
-        return Response({'status': 'error', 'message': 'Doctor not found.'}, status=404)
-    except Appointment.DoesNotExist:
-        return Response({'status': 'error', 'message': 'Appointment not found.'}, status=404)
+
     except Exception as e:
         return Response({'status': 'error', 'message': str(e)}, status=500)
-
-

@@ -124,10 +124,7 @@ def generate_diet_plan(data_dict):
         # UPDATED: New syntax for content generation
         response = client.models.generate_content(
             model='gemini-2.5-flash-lite', 
-<<<<<<< HEAD
-=======
             # model='gemini-2.5-flash', 
->>>>>>> 753494074b90b5844b76cd1c3ad31159a0d84bf0
             contents=prompt,
             config={
                 'response_mime_type': 'application/json',
