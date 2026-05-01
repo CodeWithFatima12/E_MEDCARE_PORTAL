@@ -1,0 +1,96 @@
+  :root {
+        --primary-blue: rgb(33, 32, 95);
+        --bg-gray: #f8f9fa;
+    }
+
+
+    /* Header Banner matching your Image */
+    .banner-card {
+        background: linear-gradient(90deg, var(--primary-blue) 0%, #3e3c91 100%);
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        color: white;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .banner-card h2 {
+        font-weight: 500;
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    #doctor-grid{
+       padding: 20px;
+
+       
+    }
+    /* Doctor Card matching your Mockup */
+    .doctor-card {
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #eee;
+        padding: 20px 20px;
+        text-align: center;
+        transition: 0.3s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+    }
+    .doctor-card:hover {
+        box-shadow: 0 10px 25px rgba(160, 151, 151, 0.08);
+    }
+
+    .doc-img-wrapper {
+        width: 130px;
+        height: 130px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 2px solid #eee;
+    }
+    .doc-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+    .doc-name { font-size: 1rem; font-weight: 700; color: #333; margin-bottom: 5px; }
+    .doc-dept { 
+        font-size: 0.85rem; 
+        color: var(--primary-blue); 
+        text-transform: uppercase; 
+        font-weight: 700; 
+        letter-spacing: 0.5px;
+        margin-bottom: 25px;
+    }
+
+    /* Buttons exactly like your image */
+    .btn-profile {
+     font-size: 1rem;
+
+        background: white;
+        color: #888;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        font-weight: 500;
+        width: 100%;
+        margin-bottom: 12px;
+        display: block;
+        text-decoration: none;
+    }
+    .btn-profile:hover { background: #f9f9f9; color: #555; }
+
+    .btn-book {
+        background: var(--primary-blue);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        font-weight: 500;
+        width: 100%;
+        display: block;
+        text-decoration: none;
+        font-size: 1rem;
+    }
+    .btn-book:hover { background: #1a194d; color: white; }

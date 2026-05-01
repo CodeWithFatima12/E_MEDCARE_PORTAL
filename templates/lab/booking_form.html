@@ -5,6 +5,11 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/lab/lab_booking.css' %}">
+<style>
+    .modal-header {
+        background-color: rgb(33, 32, 95);
+    }
+</style>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
@@ -15,8 +20,8 @@
 {% block content %}
 <div class="container py-5">
     <div class="card mx-auto" style="max-width: 650px;">
-        <div class="card-header text-white text-center py-4">
-            <h2 class="mb-0">🧪 Confirm Your Booking</h2>
+        <div class="card-header text-white text-center py-3">
+            <h2 class="mb-0">Confirm Your Booking</h2>
         </div>
         
         <div class="card-body p-5">
@@ -58,7 +63,7 @@
                     <button type="submit" class="btn btn-lg text-white" style="background-color: rgb(33, 32, 95);">
                         Confirm Appointment
                     </button>
-                    <a href="{% url 'lab_reports' %}" class="btn btn-link text-muted text-center text-decoration-none">Back to Tests</a>
+                    {% comment %} <a href="{% url 'lab_reports' %}" class="btn btn-link text-muted text-center text-decoration-none">Back to Tests</a> {% endcomment %}
                 </div>
             </form>
         </div>
@@ -68,8 +73,8 @@
 <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg modal-dialog-centered"> 
         <div class="modal-content">
-            <div class="modal-header bg-success text-white">
-                <h5 class="modal-title">✅ Booking Successfully Confirmed</h5>
+            <div class="modal-header  text-white">
+                <h5 class="modal-title"> Booking Successfully Confirmed</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-5" id="printableArea">

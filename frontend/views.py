@@ -12,11 +12,11 @@ from ai_module.forms import FoodCategoryForm
 @login_required
 def profile_view(request):
 
-    # ✅ Superuser / staff admin panel
+    #  Superuser / staff admin panel
     if request.user.is_superuser or request.user.is_staff:
         return redirect('/admin/')
 
-    # ⏰ Greeting logic
+    #  Greeting logic
     hour = datetime.datetime.now().hour
 
     if hour < 12:
@@ -29,7 +29,7 @@ def profile_view(request):
     user = request.user
     role = user.role
 
-    # 👇 shared context (important)
+    #  shared context (important)
     context = {
         'greet': greet,
         'name': user.get_full_name() if user.get_full_name() else user.username,
@@ -37,7 +37,7 @@ def profile_view(request):
         'role': role
     }
 
-    # 👇 role-based dashboards
+    #  role-based dashboards
     if role == 'doctor':
         return render(request, 'appointment/doctor_dashboard.html', context)
 
@@ -58,19 +58,22 @@ def signup_view(request):
     """Render the signup page"""
     return render(request, 'accounts/signup.html')
 
+@login_required
 def homepage_view(request):
     """Render the homepage (after successful login)"""
     return render(request, 'others/homepage.html')
 
-
+@login_required
 def pharmacy_view(request):
     """Render the pharmacy page"""
     return render(request, 'pharmacy/pharmacy.html')
 
+@login_required
 def about_us_view(request):
     """Render the about us page"""
     return render(request, 'others/about-us.html')
 
+@login_required
 def appointment_view(request):
     """Render the appointment page"""
     return render(request, 'appointment/appointment.html')
@@ -82,6 +85,8 @@ def appointment_view(request):
 #     })
 # def ai_health_monitor_view(request):
 #     return redirect('food_preferences')
+
+@login_required
 def ai_health_monitor_view(request):
     # Use the subfolder path
     return render(request, 'ai_module/Ai_home.html') 
@@ -90,9 +95,11 @@ def ai_health_monitor_view(request):
 #     """Render the profile page"""
 #     return render(request, 'others/dashboard.html')
 
+@login_required
 def lab_view(request):
     """Render the lab reports page"""
     return render(request, 'lab/lab_reports.html')
 
+@login_required
 def cart_page_view(request):
     return render(request, 'pharmacy/cart.html') 

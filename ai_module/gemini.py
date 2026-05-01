@@ -9,7 +9,9 @@ def generate_diet_plan(data_dict):
     """
     # --- Step 0: Initialize Client ---
     # It is safer to use settings.GEMINI_API_KEY if you have it defined there
-    api_key = getattr(settings, "GEMINI_API_KEY", "IzaSyBlNQY144wTACrVcg3j8UizeUNVjk23mKE")
+   # api_key = getattr(settings, "GEMINI_API_KEY", "IzaSyBlNQY144wTACrVcg3j8UizeUNVjk23mKE")
+
+    api_key = getattr(settings, "GEMINI_API_KEY", None)
     client = genai.Client(api_key=api_key)
 
     # Extract data
@@ -113,7 +115,7 @@ def generate_diet_plan(data_dict):
     try:
         # UPDATED: New syntax for content generation
         response = client.models.generate_content(
-            model='gemini-2.0-flash', 
+            model='gemini-2.5-flash-lite', 
             contents=prompt,
             config={
                 'response_mime_type': 'application/json',
