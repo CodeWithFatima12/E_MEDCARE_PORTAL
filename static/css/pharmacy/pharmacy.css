@@ -39,11 +39,17 @@
     /* Product card animation */
     .product-card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+
     }
 
     .product-card:hover {
         transform: translateY(-8px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .card{
+            border:1px solid rgb(206, 224, 247) !important;
+         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     
    
