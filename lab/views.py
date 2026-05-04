@@ -64,6 +64,15 @@ def lab_view(request):
 #     return render(request, 'lab/booking_form.html', context)
 @login_required(login_url='signin')
 def book_appointment(request, test_id):
+
+    # 1. ROLE RESTRICTION CHECK (Starts here)
+    user = request.user
+    restricted_roles = ['doctor', 'pharmacist', 'lab_technician']
+    
+    if user.is_superuser or user.is_staff or (hasattr(user, 'role') and user.role in restricted_roles):
+        # Jab doctor ya admin click karega, wo redirect ho jayega aur ye tag message trigger karega
+        messages.error(request, "Access Denied: Admins, Doctors, and Staff members are not allowed to book lab tests.", extra_tags='restriction_error')
+        return redirect('/api/lab/lab-reports/') # Yaha apni lab list page ka URL check kar lein
     test = get_object_or_404(LabTest, id=test_id)
     
     if request.method == 'POST':

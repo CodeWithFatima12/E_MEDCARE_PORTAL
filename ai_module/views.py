@@ -67,6 +67,17 @@ scaler = joblib.load(SCALER_PATH)
 def diabetes_predict_view(request):
     result = None
     form = DiabetesPredictionForm(request.POST or None)
+    # --- RESTRICTION LOGIC START ---
+    if request.method == 'POST':
+        user = request.user
+        restricted_roles = ['doctor', 'pharmacist', 'lab_technician']
+        
+        # Check if user is staff, superuser or has a restricted role
+        if user.is_superuser or user.is_staff or (hasattr(user, 'role') and user.role in restricted_roles):
+            return render(request, 'ai_module/diabetes_form.html', {
+                'form': form, 
+                'restriction_error': "Access Denied: Doctors and Staff members are not allowed to use the AI Diagnostic tool for personal use."
+            })
 
     if request.method == 'POST' and form.is_valid():
         data = form.cleaned_data

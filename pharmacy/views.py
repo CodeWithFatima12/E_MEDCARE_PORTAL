@@ -53,8 +53,14 @@ class CartViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['post'])
     def add(self, request):
         user = request.user
+        # Check for restricted roles (Admins, Doctors, Staff)
+        restricted_roles = ['doctor', 'pharmacist', 'lab_technician']
+        if request.user.is_superuser or request.user.is_staff or (hasattr(request.user, 'role') and request.user.role in restricted_roles):
+            return Response({"message": "Access Denied: Doctors and Admins cannot purchase medicines."}, status=403)
+        
         medicine_id = request.data.get('medicine_id')
 
+         
         cart, created = Cart.objects.get_or_create(user=user)
         medicine = get_object_or_404(Medicine, id=medicine_id)
 

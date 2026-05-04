@@ -28,9 +28,18 @@ def doctor_profile_page_view(request, doc_id):
 def doctor_list_page_view(request):
     return render(request, 'appointment/doctors_list.html')
 
+
+
+
 def booking_page_view(request, doc_id):
     if not request.user.is_authenticated:
         return render(request, 'accounts/signin.html')
+    
+    user = request.user
+    restricted_roles = ['doctor', 'pharmacist', 'lab_technician']
+    
+    
+
     
     doctor = get_object_or_404(Doctor, id=doc_id)
     raw_schedules = list(DoctorSchedule.objects.filter(doctor=doctor, is_available=True))
@@ -146,6 +155,13 @@ def get_available_slots_api(request):
 def book_appointment_api(request):
     data = request.data
     user = request.user
+    restricted_roles = ['doctor', 'pharmacist', 'lab_technician']
+    
+    if user.is_superuser or user.is_staff or (hasattr(user, 'role') and user.role in restricted_roles):
+         return JsonResponse({
+             'status': 'error', 
+             'message': 'Access Denied: Admins/Staff members cannot book appointments. Please use a regular patient account.'
+         }, status=403)
 
     try:
         doctor = Doctor.objects.get(id=data['doctor_id'])
@@ -558,8 +574,13 @@ def cancel_affected_appointments(doctor, day_of_week, old_start, old_end, new_st
         
         for appointment in appointments:
             # 1. Store patient info before changing status
+            # 1. Sahi Patient Name ki logic (Serializer wali)
+            if appointment.patient_name:
+                patient_name = appointment.patient_name.title()
+            else:
+                patient_name = f"{appointment.patient.first_name} {appointment.patient.last_name}".title()
             patient_email = appointment.patient.email
-            patient_name = appointment.patient.first_name
+            # patient_name = appointment.patient.first_name
             doc_name = f"Dr. {doctor.user.last_name}"
             apt_date = appointment.slot.date.strftime('%d-%b-%Y')
             apt_time = appointment.slot.start_time.strftime('%I:%M %p')
@@ -740,7 +761,12 @@ def doctor_cancel_appointment_api(request, appointment_id):
         
         # Patient details for email
         patient_email = appointment.patient.email
-        patient_name = f"{appointment.patient.first_name}"
+        # patient_name = f"{appointment.patient.first_name}"
+        if appointment.patient_name:
+            patient_name = appointment.patient_name.title()
+        else:
+            patient_name = f"{appointment.patient.first_name} {appointment.patient.last_name}".title()
+        
         doc_name = f"Dr. {doctor.user.last_name}"
 
         # 2. Status Update (Database kaam pehle)

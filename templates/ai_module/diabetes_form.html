@@ -38,6 +38,8 @@
     </div>
 </div>
 
+
+
 {% if result %}
 <div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -65,6 +67,7 @@
     </div>
 </div>
 
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var myModal = new bootstrap.Modal(document.getElementById('resultModal'));
@@ -72,6 +75,20 @@
     });
 </script>
 {% endif %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if restriction_error %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Unauthorized Access',
+            text: "{{ restriction_error }}",
+            confirmButtonColor: '#21205f'
+        });
+    });
+</script>
+{% endif %}
 {% endblock %}
