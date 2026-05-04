@@ -19,7 +19,7 @@ The **AI-Powered E-Medcare Portal** is a centralized healthcare management syste
 *   **Framework**: Django 5.0.
 *   **Database**: MySQL 8.0.
 *   **Libraries**: Scikit-learn, Pandas, NumPy, MySQLclient.
-*   ** Machine Learning** :Random Forest Classifier (Scikit-learn),
+*   **Machine Learning Algorithum**:Random Forest Classifier.
 *   **Frontend**: HTML5, CSS3, JavaScript (AJAX for pharmacy interactions).  
 *   **Containerization**: Docker & Docker Compose (Local Environment).
 
